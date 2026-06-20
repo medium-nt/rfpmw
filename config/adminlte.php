@@ -336,6 +336,19 @@ return [
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
+        [
+            'text' => 'Настройки',
+            'icon' => 'fas fa-fw fa-cogs',
+            'can' => 'is-admin',
+            'submenu' => [
+                [
+                    'text' => 'Пользователи',
+                    'route' => 'users.index',
+                    'icon' => 'fas fa-fw fa-users',
+                    'can' => 'is-admin',
+                ],
+            ],
+        ],
         ['header' => 'labels'],
         [
             'text' => 'important',
@@ -389,6 +402,21 @@ return [
     */
 
     'plugins' => [
+        'Toastr' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [
