@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -69,5 +68,21 @@ class User extends Authenticatable
     public function isManager(): bool
     {
         return $this->hasRole('manager');
+    }
+
+    /**
+     * Подпись текущего пользователя для шапки user-меню AdminLTE (название роли).
+     */
+    public function adminlte_desc(): string
+    {
+        return $this->role?->title ?? '';
+    }
+
+    /**
+     * URL страницы профиля для кнопки «Профиль» в user-меню AdminLTE.
+     */
+    public function adminlte_profile_url(): string
+    {
+        return route('profile.edit');
     }
 }
