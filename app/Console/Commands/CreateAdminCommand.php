@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -49,10 +50,19 @@ class CreateAdminCommand extends Command
                 : null,
         );
 
+        $adminRole = Role::where('slug', 'admin')->first();
+
+        if (! $adminRole) {
+            $this->error('Роль администратора не найдена. Сначала выполните сидер: php artisan db:seed --class=RoleSeeder');
+
+            return self::FAILURE;
+        }
+
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
+            'role_id' => $adminRole->id,
         ]);
 
         info("Администратор «{$user->name}» ({$user->email}) успешно создан с ID {$user->id}.");
