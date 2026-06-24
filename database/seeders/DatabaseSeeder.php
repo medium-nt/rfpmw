@@ -17,9 +17,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Учётные записи для первого входа.
+        User::factory()->admin()->create([
+            'name' => 'Админ',
+            'email' => '1@1.ru',
+            'password' => '111111',
+        ]);
+
+        User::factory()->manager()->create([
+            'name' => 'Менеджер',
+            'email' => '2@2.ru',
+            'password' => '222222',
         ]);
     }
 }

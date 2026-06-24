@@ -31,6 +31,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'role_id' => Role::where('slug', 'manager')->value('id'),
+            'position' => fake()->optional()->jobTitle(),
+            'phone' => fake()->optional()->phoneNumber(),
             'remember_token' => Str::random(10),
         ];
     }

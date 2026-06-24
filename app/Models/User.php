@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -14,13 +16,15 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'role_id',
+        'position',
+        'phone',
     ];
 
     /**
@@ -33,6 +37,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'deleted_at' => 'datetime',
         ];
     }
 
@@ -44,6 +49,46 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Контрагенты, закреплённые за менеджером.
+     *
+     * @return HasMany<Contractor>
+     */
+    public function contractors(): HasMany
+    {
+        return $this->hasMany(Contractor::class);
+    }
+
+    /**
+     * Запросы, принятые менеджером.
+     *
+     * @return HasMany<Request>
+     */
+    public function requests(): HasMany
+    {
+        return $this->hasMany(Request::class);
+    }
+
+    /**
+     * Коммерческие предложения, отправленные менеджером.
+     *
+     * @return HasMany<Proposal>
+     */
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    /**
+     * События, созданные менеджером.
+     *
+     * @return HasMany<Event>
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
     }
 
     /**
