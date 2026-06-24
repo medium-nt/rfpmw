@@ -320,6 +320,11 @@ return [
             'text' => 'search',
         ],
         [
+            'text' => 'Контрагенты',
+            'icon' => 'fas fa-fw fa-building',
+            'route' => 'contractors.index',
+        ],
+        [
             'text' => 'Настройки',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',

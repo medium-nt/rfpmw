@@ -45,4 +45,19 @@ class Contractor extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    /**
+     * Справочник типов контрагента для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getTypes(): array
+    {
+        return [
+            'customer' => 'Заказчик',
+            'partner' => 'Партнёр',
+            'supplier' => 'Поставщик',
+            'vendor' => 'Вендор (производитель)',
+        ];
+    }
 }

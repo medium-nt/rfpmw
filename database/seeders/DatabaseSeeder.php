@@ -29,5 +29,7 @@ class DatabaseSeeder extends Seeder
             'email' => '2@2.ru',
             'password' => '222222',
         ]);
+
+        $this->call(ContractorSeeder::class);
     }
 }

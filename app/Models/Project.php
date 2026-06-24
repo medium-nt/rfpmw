@@ -36,7 +36,9 @@ class Project extends Model
      */
     public function contractor(): BelongsTo
     {
-        return $this->belongsTo(Contractor::class);
+        // withTrashed: после мягкого удаления контрагент остаётся доступен из проекта,
+        // привязка физически не теряется (SoftDeletes не обнуляет contractor_id).
+        return $this->belongsTo(Contractor::class)->withTrashed();
     }
 
     /**
