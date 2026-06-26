@@ -263,6 +263,47 @@
         </div>
     </div>
 
+    <div class="card card-info card-outline mt-3">
+        <div class="card-header">
+            <h3 class="card-title">События</h3>
+            <div class="card-tools">
+                <a href="{{ route('events.create', $contractor) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Создать
+                </a>
+            </div>
+        </div>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Сотрудник</th>
+                        <th>Тема</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($events as $event)
+                        <tr>
+                            <td>
+                                <a href="{{ route('events.show', $event) }}">№{{ $event->id }}</a>
+                            </td>
+                            <td>{{ $event->date?->format('d.m.Y') ?? '—' }}</td>
+                            <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
+                            <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td>{{ $event->subject ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">События отсутствуют.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="card card-danger mt-3">
         <div class="card-header">
             <h3 class="card-title">Удаление контрагента</h3>

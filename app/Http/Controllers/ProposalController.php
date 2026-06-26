@@ -67,7 +67,7 @@ class ProposalController extends Controller
     {
         $this->authorizeProposalAccess($proposal);
 
-        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user']);
+        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'events.employedPerson.contactPerson', 'events.user']);
 
         return view('proposals.show', compact('proposal'));
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactPerson;
 use App\Models\Contractor;
+use App\Models\Event;
 use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\Request;
@@ -66,6 +67,16 @@ class Controller extends BaseController
     {
         if (auth()->user()->isManager() && $proposal->employedPerson->contractor->user_id !== auth()->id()) {
             abort(403, 'Вы можете работать только с КП своих контрагентов.');
+        }
+    }
+
+    /**
+     * Проверка доступа к событию: менеджер работает только с событиями своих контрагентов.
+     */
+    protected function authorizeEventAccess(Event $event): void
+    {
+        if (auth()->user()->isManager() && $event->employedPerson->contractor->user_id !== auth()->id()) {
+            abort(403, 'Вы можете работать только с событиями своих контрагентов.');
         }
     }
 }

@@ -345,6 +345,11 @@ return [
             'route' => 'proposals.index',
         ],
         [
+            'text' => 'События',
+            'icon' => 'fas fa-fw fa-calendar-alt',
+            'route' => 'events.index',
+        ],
+        [
             'text' => 'Настройки',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',

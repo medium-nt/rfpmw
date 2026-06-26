@@ -76,4 +76,18 @@ class Event extends Model
     {
         return $this->belongsTo(Proposal::class);
     }
+
+    /**
+     * Справочник типов события для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getEventTypes(): array
+    {
+        return [
+            'call' => 'Звонок',
+            'letter' => 'Письмо',
+            'meeting' => 'Встреча',
+        ];
+    }
 }

@@ -69,7 +69,7 @@ class ProjectController extends Controller
     {
         $this->authorizeProjectAccess($project);
 
-        $project->load(['contractor.user', 'responsiblePerson.contactPerson']);
+        $project->load(['contractor.user', 'responsiblePerson.contactPerson', 'events.employedPerson.contactPerson', 'events.user']);
 
         return view('projects.show', compact('project'));
     }

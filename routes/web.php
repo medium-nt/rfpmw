@@ -3,6 +3,7 @@
 use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\EmployedPersonController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -106,6 +107,18 @@ Route::middleware(['auth'])
         Route::get('proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('edit');
         Route::put('proposals/{proposal}', [ProposalController::class, 'update'])->name('update');
         Route::delete('proposals/{proposal}', [ProposalController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
+    ->name('events.')
+    ->group(function () {
+        Route::get('contractors/{contractor}/events/create', [EventController::class, 'create'])->name('create');
+        Route::post('contractors/{contractor}/events', [EventController::class, 'store'])->name('store');
+        Route::get('events', [EventController::class, 'index'])->name('index');
+        Route::get('events/{event}', [EventController::class, 'show'])->name('show');
+        Route::get('events/{event}/edit', [EventController::class, 'edit'])->name('edit');
+        Route::put('events/{event}', [EventController::class, 'update'])->name('update');
+        Route::delete('events/{event}', [EventController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])

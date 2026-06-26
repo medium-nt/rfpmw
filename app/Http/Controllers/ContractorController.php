@@ -6,6 +6,7 @@ use App\Http\Requests\StoreContractorRequest;
 use App\Http\Requests\UpdateContractorRequest;
 use App\Models\ContactPerson;
 use App\Models\Contractor;
+use App\Models\Event;
 use App\Models\Proposal;
 use App\Models\Request;
 use App\Models\User;
@@ -83,7 +84,13 @@ class ContractorController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return view('contractors.show', compact('contractor', 'availablePeople', 'requests', 'proposals'));
+        $events = Event::query()
+            ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
+            ->with(['employedPerson.contactPerson', 'user'])
+            ->orderByDesc('id')
+            ->get();
+
+        return view('contractors.show', compact('contractor', 'availablePeople', 'requests', 'proposals', 'events'));
     }
 
     /**
