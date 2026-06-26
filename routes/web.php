@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployedPersonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,6 +81,18 @@ Route::middleware(['auth'])
         Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
         Route::put('projects/{project}', [ProjectController::class, 'update'])->name('update');
         Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
+    ->name('requests.')
+    ->group(function () {
+        Route::get('contractors/{contractor}/requests/create', [RequestController::class, 'create'])->name('create');
+        Route::post('contractors/{contractor}/requests', [RequestController::class, 'store'])->name('store');
+        Route::get('requests', [RequestController::class, 'index'])->name('index');
+        Route::get('requests/{request}', [RequestController::class, 'show'])->name('show');
+        Route::get('requests/{request}/edit', [RequestController::class, 'edit'])->name('edit');
+        Route::put('requests/{request}', [RequestController::class, 'update'])->name('update');
+        Route::delete('requests/{request}', [RequestController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])

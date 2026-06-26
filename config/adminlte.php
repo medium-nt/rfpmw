@@ -335,6 +335,11 @@ return [
             'route' => 'projects.index',
         ],
         [
+            'text' => 'Запросы',
+            'icon' => 'fas fa-fw fa-inbox',
+            'route' => 'requests.index',
+        ],
+        [
             'text' => 'Настройки',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',

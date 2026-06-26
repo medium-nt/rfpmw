@@ -68,4 +68,19 @@ class Request extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    /**
+     * Справочник статусов запроса для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            'new' => 'Новый',
+            'processing' => 'В обработке',
+            'quoted' => 'Отправлено КП',
+            'closed' => 'Закрыт',
+        ];
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreContractorRequest;
 use App\Http\Requests\UpdateContractorRequest;
 use App\Models\ContactPerson;
 use App\Models\Contractor;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -69,7 +70,13 @@ class ContractorController extends Controller
             ->orderBy('fio')
             ->get();
 
-        return view('contractors.show', compact('contractor', 'availablePeople'));
+        $requests = Request::query()
+            ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
+            ->with(['employedPerson.contactPerson', 'user'])
+            ->orderByDesc('id')
+            ->get();
+
+        return view('contractors.show', compact('contractor', 'availablePeople', 'requests'));
     }
 
     /**

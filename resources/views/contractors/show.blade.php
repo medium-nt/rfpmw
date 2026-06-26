@@ -181,6 +181,47 @@
         </div>
     </div>
 
+    <div class="card card-warning card-outline mt-3">
+        <div class="card-header">
+            <h3 class="card-title">Запросы</h3>
+            <div class="card-tools">
+                <a href="{{ route('requests.create', $contractor) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Создать
+                </a>
+            </div>
+        </div>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Дата</th>
+                        <th>Сотрудник</th>
+                        <th>Статус</th>
+                        <th>Менеджер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($requests as $request)
+                        <tr>
+                            <td>
+                                <a href="{{ route('requests.show', $request) }}">№{{ $request->id }}</a>
+                            </td>
+                            <td>{{ $request->date?->format('d.m.Y') ?? '—' }}</td>
+                            <td>{{ $request->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
+                            <td>{{ $request->user?->name ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">Запросы отсутствуют.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="card card-danger mt-3">
         <div class="card-header">
             <h3 class="card-title">Удаление контрагента</h3>
