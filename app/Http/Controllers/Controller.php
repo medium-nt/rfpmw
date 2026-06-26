@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactPerson;
 use App\Models\Contractor;
+use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -33,6 +34,16 @@ class Controller extends BaseController
 
         if (auth()->user()->isManager() && ! $hasOwnContractor) {
             abort(403, 'Вы можете работать только с контактными лицами своих контрагентов.');
+        }
+    }
+
+    /**
+     * Проверка доступа к проекту: менеджер работает только с проектами своих контрагентов.
+     */
+    protected function authorizeProjectAccess(Project $project): void
+    {
+        if (auth()->user()->isManager() && $project->contractor->user_id !== auth()->id()) {
+            abort(403, 'Вы можете работать только с проектами своих контрагентов.');
         }
     }
 }

@@ -330,6 +330,11 @@ return [
             'route' => 'contact-people.index',
         ],
         [
+            'text' => 'Проекты',
+            'icon' => 'fas fa-fw fa-project-diagram',
+            'route' => 'projects.index',
+        ],
+        [
             'text' => 'Настройки',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',

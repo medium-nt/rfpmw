@@ -70,4 +70,19 @@ class Project extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    /**
+     * Справочник статусов проекта для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            'new' => 'Новый',
+            'in_progress' => 'В работе',
+            'completed' => 'Завершён',
+            'cancelled' => 'Отменён',
+        ];
+    }
 }

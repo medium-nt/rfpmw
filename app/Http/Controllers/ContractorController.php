@@ -62,7 +62,7 @@ class ContractorController extends Controller
     {
         $this->authorizeAccess($contractor);
 
-        $contractor->load('employedPeople.contactPerson');
+        $contractor->load(['employedPeople.contactPerson', 'projects.responsiblePerson.contactPerson']);
 
         $availablePeople = ContactPerson::query()
             ->whereDoesntHave('employedPeople', fn ($q) => $q->where('contractor_id', $contractor->id)->whereNull('deleted_at'))

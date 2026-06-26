@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\EmployedPersonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +68,18 @@ Route::middleware(['auth'])
 
         Route::get('contractors/{contractor}/contact-people/create', [ContactPersonController::class, 'create'])->name('create');
         Route::post('contractors/{contractor}/contact-people', [ContactPersonController::class, 'store'])->name('store');
+    });
+
+Route::middleware(['auth'])
+    ->name('projects.')
+    ->group(function () {
+        Route::get('contractors/{contractor}/projects/create', [ProjectController::class, 'create'])->name('create');
+        Route::post('contractors/{contractor}/projects', [ProjectController::class, 'store'])->name('store');
+        Route::get('projects', [ProjectController::class, 'index'])->name('index');
+        Route::get('projects/{project}', [ProjectController::class, 'show'])->name('show');
+        Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
+        Route::put('projects/{project}', [ProjectController::class, 'update'])->name('update');
+        Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])

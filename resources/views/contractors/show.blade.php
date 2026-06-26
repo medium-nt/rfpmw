@@ -142,6 +142,45 @@
         </div>
     </div>
 
+    <div class="card card-info card-outline mt-3">
+        <div class="card-header">
+            <h3 class="card-title">Проекты</h3>
+            <div class="card-tools">
+                <a href="{{ route('projects.create', $contractor) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Создать
+                </a>
+            </div>
+        </div>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Ответственный</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($contractor->projects as $project)
+                        <tr>
+                            <td>
+                                <a href="{{ route('projects.show', $project) }}">{{ $project->name }}</a>
+                            </td>
+                            <td>{{ $project->date?->format('d.m.Y') ?? '—' }}</td>
+                            <td>{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status ?? '—' }}</td>
+                            <td>{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-3">Проекты отсутствуют.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="card card-danger mt-3">
         <div class="card-header">
             <h3 class="card-title">Удаление контрагента</h3>
