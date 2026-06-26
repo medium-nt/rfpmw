@@ -35,13 +35,13 @@
                     @foreach ($contractors as $contractor)
                         <tr>
                             <td>{{ $contractor->id }}</td>
-                            <td>{{ $contractor->name }}</td>
+                            <td><a href="{{ route('contractors.show', $contractor) }}">{{ $contractor->name }}</a></td>
                             <td>{{ $contractor->inn }}</td>
                             <td>{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>
                             <td>{{ $contractor->user?->name ?? '—' }}</td>
                             <td class="text-right">
-                                <a href="{{ route('contractors.edit', $contractor) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-edit"></i> Редактировать
+                                <a href="{{ route('contractors.show', $contractor) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-folder-open"></i> Открыть
                                 </a>
                             </td>
                         </tr>

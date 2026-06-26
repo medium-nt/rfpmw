@@ -54,6 +54,28 @@ class ContractorCrudTest extends TestCase
     }
 
     /**
+     * Менеджер может открыть карточку своего контрагента.
+     */
+    public function test_manager_can_show_own_contractor(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $contractor = Contractor::factory()->for($manager, 'user')->create();
+
+        $this->actingAs($manager)->get(route('contractors.show', $contractor))->assertOk();
+    }
+
+    /**
+     * Менеджеру запрещён просмотр карточки чужого контрагента (403).
+     */
+    public function test_manager_cannot_show_other_contractor(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $contractor = Contractor::factory()->for(User::factory()->manager()->create(), 'user')->create();
+
+        $this->actingAs($manager)->get(route('contractors.show', $contractor))->assertForbidden();
+    }
+
+    /**
      * Менеджер может открыть форму редактирования своего контрагента.
      */
     public function test_manager_can_edit_own_contractor(): void
@@ -83,13 +105,17 @@ class ContractorCrudTest extends TestCase
         $admin = User::factory()->admin()->create();
         $manager = User::factory()->manager()->create();
 
-        $this->actingAs($admin)->post(route('contractors.store'), [
+        $response = $this->actingAs($admin)->post(route('contractors.store'), [
             'name' => 'ООО Ромашка',
             'inn' => '1234567890',
             'type' => 'customer',
             'user_id' => $manager->id,
-        ])->assertRedirect(route('contractors.index'));
+        ]);
 
+        $contractor = Contractor::where('name', 'ООО Ромашка')->first();
+        $this->assertNotNull($contractor);
+
+        $response->assertRedirect(route('contractors.show', $contractor));
         $this->assertDatabaseHas('contractors', ['name' => 'ООО Ромашка', 'user_id' => $manager->id]);
     }
 
@@ -100,13 +126,17 @@ class ContractorCrudTest extends TestCase
     {
         $manager = User::factory()->manager()->create();
 
-        $this->actingAs($manager)->post(route('contractors.store'), [
+        $response = $this->actingAs($manager)->post(route('contractors.store'), [
             'name' => 'ООО Моё',
             'inn' => '1234567890',
             'type' => 'partner',
             'user_id' => $manager->id,
-        ])->assertRedirect(route('contractors.index'));
+        ]);
 
+        $contractor = Contractor::where('name', 'ООО Моё')->first();
+        $this->assertNotNull($contractor);
+
+        $response->assertRedirect(route('contractors.show', $contractor));
         $this->assertDatabaseHas('contractors', ['name' => 'ООО Моё', 'user_id' => $manager->id]);
     }
 
@@ -118,13 +148,17 @@ class ContractorCrudTest extends TestCase
         $manager = User::factory()->manager()->create();
         $other = User::factory()->manager()->create();
 
-        $this->actingAs($manager)->post(route('contractors.store'), [
+        $response = $this->actingAs($manager)->post(route('contractors.store'), [
             'name' => 'ООО Взлом',
             'inn' => '1234567890',
             'type' => 'customer',
             'user_id' => $other->id,
-        ])->assertRedirect(route('contractors.index'));
+        ]);
 
+        $contractor = Contractor::where('name', 'ООО Взлом')->first();
+        $this->assertNotNull($contractor);
+
+        $response->assertRedirect(route('contractors.show', $contractor));
         $this->assertDatabaseHas('contractors', ['name' => 'ООО Взлом', 'user_id' => $manager->id]);
         $this->assertDatabaseMissing('contractors', ['name' => 'ООО Взлом', 'user_id' => $other->id]);
     }
@@ -220,14 +254,16 @@ class ContractorCrudTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
 
-        $this->actingAs($admin)->post(route('contractors.store'), [
+        $response = $this->actingAs($admin)->post(route('contractors.store'), [
             'name' => 'ООО Без Менеджера',
             'inn' => '1234567890',
             'type' => 'customer',
-        ])->assertRedirect(route('contractors.index'));
+        ]);
 
         $contractor = Contractor::where('name', 'ООО Без Менеджера')->first();
         $this->assertNotNull($contractor);
+
+        $response->assertRedirect(route('contractors.show', $contractor));
         $this->assertNull($contractor->user_id);
     }
 
@@ -245,7 +281,7 @@ class ContractorCrudTest extends TestCase
             'inn' => $contractor->inn,
             'type' => 'customer',
             'user_id' => '',
-        ])->assertRedirect(route('contractors.index'));
+        ])->assertRedirect(route('contractors.show', $contractor));
 
         $this->assertNull($contractor->fresh()->user_id);
     }

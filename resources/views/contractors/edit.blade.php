@@ -92,23 +92,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a href="{{ route('contractors.index') }}" class="btn btn-secondary">Отмена</a>
-            </form>
-        </div>
-    </div>
-
-    <div class="card card-danger mt-3">
-        <div class="card-header">
-            <h3 class="card-title">Удаление контрагента</h3>
-        </div>
-        <div class="card-body">
-            <p>Контрагент будет перемещён в корзину (мягкое удаление). Привязки к проектам и сотрудникам сохраняются.</p>
-            <form method="POST" action="{{ route('contractors.destroy', $contractor) }}" onsubmit="return confirm(@js('Удалить контрагента «' . $contractor->name . '»? Он будет перемещён в корзину.'));">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash"></i> Удалить
-                </button>
+                <a href="{{ route('contractors.show', $contractor) }}" class="btn btn-secondary">Отмена</a>
             </form>
         </div>
     </div>

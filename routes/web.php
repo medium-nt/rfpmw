@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ContactPersonController;
 use App\Http\Controllers\ContractorController;
+use App\Http\Controllers\EmployedPersonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -43,6 +45,28 @@ Route::middleware(['auth'])
         Route::delete('/{contractor}', [ContractorController::class, 'destroy'])->name('destroy');
         Route::get('/trashed', [ContractorController::class, 'trashed'])->name('trashed');
         Route::post('/{id}/restore', [ContractorController::class, 'restore'])->name('restore');
+        Route::get('/{contractor}', [ContractorController::class, 'show'])->name('show');
+    });
+
+Route::middleware(['auth'])
+    ->name('employed-people.')
+    ->prefix('contractors/{contractor}/employed-people')
+    ->group(function () {
+        Route::post('/', [EmployedPersonController::class, 'store'])->name('store');
+        Route::put('/{employed_person}', [EmployedPersonController::class, 'update'])->name('update');
+        Route::delete('/{employed_person}', [EmployedPersonController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
+    ->name('contact-people.')
+    ->group(function () {
+        Route::get('contact-people', [ContactPersonController::class, 'index'])->name('index');
+        Route::get('contact-people/{person}', [ContactPersonController::class, 'show'])->name('show');
+        Route::get('contact-people/{person}/edit', [ContactPersonController::class, 'edit'])->name('edit');
+        Route::put('contact-people/{person}', [ContactPersonController::class, 'update'])->name('update');
+
+        Route::get('contractors/{contractor}/contact-people/create', [ContactPersonController::class, 'create'])->name('create');
+        Route::post('contractors/{contractor}/contact-people', [ContactPersonController::class, 'store'])->name('store');
     });
 
 Route::middleware(['auth'])

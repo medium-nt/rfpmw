@@ -325,6 +325,11 @@ return [
             'route' => 'contractors.index',
         ],
         [
+            'text' => 'Контактные лица',
+            'icon' => 'fas fa-fw fa-id-card',
+            'route' => 'contact-people.index',
+        ],
+        [
             'text' => 'Настройки',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',
@@ -410,7 +415,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

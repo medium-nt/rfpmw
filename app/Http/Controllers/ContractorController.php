@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContractorRequest;
 use App\Http\Requests\UpdateContractorRequest;
+use App\Models\ContactPerson;
 use App\Models\Contractor;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -47,11 +48,28 @@ class ContractorController extends Controller
             $data['user_id'] = auth()->id();
         }
 
-        Contractor::create($data);
+        $contractor = Contractor::create($data);
 
         return redirect()
-            ->route('contractors.index')
+            ->route('contractors.show', $contractor)
             ->with('success', 'Контрагент успешно создан.');
+    }
+
+    /**
+     * Карточка контрагента с данными, контактными лицами и действиями.
+     */
+    public function show(Contractor $contractor): View
+    {
+        $this->authorizeAccess($contractor);
+
+        $contractor->load('employedPeople.contactPerson');
+
+        $availablePeople = ContactPerson::query()
+            ->whereDoesntHave('employedPeople', fn ($q) => $q->where('contractor_id', $contractor->id)->whereNull('deleted_at'))
+            ->orderBy('fio')
+            ->get();
+
+        return view('contractors.show', compact('contractor', 'availablePeople'));
     }
 
     /**
@@ -83,7 +101,7 @@ class ContractorController extends Controller
         $contractor->update($data);
 
         return redirect()
-            ->route('contractors.index')
+            ->route('contractors.show', $contractor)
             ->with('success', 'Контрагент успешно обновлён.');
     }
 
@@ -150,9 +168,7 @@ class ContractorController extends Controller
      */
     protected function authorizeAccess(Contractor $contractor): void
     {
-        if (auth()->user()->isManager() && $contractor->user_id !== auth()->id()) {
-            abort(403, 'Вы можете работать только со своими контрагентами.');
-        }
+        $this->authorizeContractorAccess($contractor);
     }
 
     /**
