@@ -68,4 +68,20 @@ class Proposal extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    /**
+     * Справочник статусов КП для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            'draft' => 'Черновик',
+            'sent' => 'Отправлено',
+            'accepted' => 'Принято',
+            'rejected' => 'Отклонено',
+            'expired' => 'Истекло',
+        ];
+    }
 }

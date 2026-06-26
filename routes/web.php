@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployedPersonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -93,6 +94,18 @@ Route::middleware(['auth'])
         Route::get('requests/{request}/edit', [RequestController::class, 'edit'])->name('edit');
         Route::put('requests/{request}', [RequestController::class, 'update'])->name('update');
         Route::delete('requests/{request}', [RequestController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
+    ->name('proposals.')
+    ->group(function () {
+        Route::get('contractors/{contractor}/proposals/create', [ProposalController::class, 'create'])->name('create');
+        Route::post('contractors/{contractor}/proposals', [ProposalController::class, 'store'])->name('store');
+        Route::get('proposals', [ProposalController::class, 'index'])->name('index');
+        Route::get('proposals/{proposal}', [ProposalController::class, 'show'])->name('show');
+        Route::get('proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('edit');
+        Route::put('proposals/{proposal}', [ProposalController::class, 'update'])->name('update');
+        Route::delete('proposals/{proposal}', [ProposalController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])

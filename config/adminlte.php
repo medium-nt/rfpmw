@@ -325,7 +325,7 @@ return [
             'route' => 'contractors.index',
         ],
         [
-            'text' => 'Контактные лица',
+            'text' => 'Конт.лица',
             'icon' => 'fas fa-fw fa-id-card',
             'route' => 'contact-people.index',
         ],
@@ -338,6 +338,11 @@ return [
             'text' => 'Запросы',
             'icon' => 'fas fa-fw fa-inbox',
             'route' => 'requests.index',
+        ],
+        [
+            'text' => 'КП',
+            'icon' => 'fas fa-fw fa-file-invoice-dollar',
+            'route' => 'proposals.index',
         ],
         [
             'text' => 'Настройки',

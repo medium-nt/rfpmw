@@ -1,0 +1,86 @@
+@extends('layouts.admin')
+
+@section('title', 'Новое КП')
+
+@section('content_header')
+    <h1>Новое коммерческое предложение</h1>
+    <p class="text-muted mb-0">для контрагента «{{ $contractor->name }}»</p>
+@endsection
+
+@section('content')
+    <div class="card">
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (empty($employedPeople))
+                <div class="alert alert-warning">
+                    У этого контрагента ещё нет сотрудников. Сначала добавьте контактное лицо, затем создайте КП.
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('proposals.store', $contractor) }}">
+                @csrf
+
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-6">
+                        <label for="employed_person_id">Сотрудник (кому направлено) <span class="text-danger">*</span></label>
+                        <select id="employed_person_id" name="employed_person_id"
+                            class="form-control @error('employed_person_id') is-invalid @enderror" required>
+                            <option value="">— Выберите —</option>
+                            @foreach ($employedPeople as $id => $label)
+                                <option value="{{ $id }}" @selected(old('employed_person_id') == $id)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('employed_person_id')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-12 col-md-3">
+                        <label for="date">Дата <span class="text-danger">*</span></label>
+                        <input type="date" id="date" name="date"
+                            class="form-control @error('date') is-invalid @enderror"
+                            value="{{ old('date') }}" required>
+                        @error('date')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-12 col-md-3">
+                        <label for="status">Статус</label>
+                        <select id="status" name="status" class="form-control @error('status') is-invalid @enderror">
+                            <option value="">— Не выбран —</option>
+                            @foreach (\App\Models\Proposal::getStatuses() as $key => $label)
+                                <option value="{{ $key }}" @selected(old('status') === $key)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" @disabled(empty($employedPeople))>
+                    <i class="fas fa-check"></i> Создать
+                </button>
+                <a href="{{ route('contractors.show', $contractor) }}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+
+    @push('js')
+        <script>
+            $('#employed_person_id').select2({
+                placeholder: 'Выберите сотрудника',
+                width: '100%',
+                language: { noResults: () => 'Нет сотрудников' }
+            });
+        </script>
+    @endpush
+@endsection
