@@ -34,7 +34,7 @@
                         @enderror
                     </div>
                     <div class="form-group col-12 col-md-3">
-                        <label for="date">Дата <span class="text-danger">*</span></label>
+                        <label for="date">Дата выхода в серию <span class="text-danger">*</span></label>
                         <input type="date" id="date" name="date"
                             class="form-control @error('date') is-invalid @enderror"
                             value="{{ old('date') }}" required>

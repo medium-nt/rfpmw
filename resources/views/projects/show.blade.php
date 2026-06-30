@@ -26,7 +26,7 @@
                     <a href="{{ route('contractors.show', $project->contractor) }}">{{ $project->contractor->name }}</a>
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Дата</dt>
+                <dt class="col-sm-3 col-md-2">Дата выхода в серию</dt>
                 <dd class="col-sm-9 col-md-10">{{ $project->date?->format('d.m.Y') ?? '—' }}</dd>
 
                 <dt class="col-sm-3 col-md-2">Статус</dt>
