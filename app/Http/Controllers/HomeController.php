@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 
 class HomeController extends Controller
 {
@@ -17,12 +17,14 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Redirect to the contractors index page.
      *
-     * @return Renderable
+     * Temporary: the dashboard will be implemented here in the future.
+     *
+     * @return RedirectResponse
      */
     public function index()
     {
-        return view('home');
+        return redirect()->route('contractors.index');
     }
 }
