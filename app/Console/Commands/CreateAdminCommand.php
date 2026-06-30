@@ -19,7 +19,7 @@ class CreateAdminCommand extends Command
     /**
      * Execute the console command.
      *
-     * Запрашивает имя, email и пароль администратора через Laravel Prompts,
+     * Запрашивает имя, логин и пароль администратора через Laravel Prompts,
      * валидирует данные и создаёт пользователя. Пароль хешируется автоматически
      * через cast `hashed` модели User.
      */
@@ -31,13 +31,13 @@ class CreateAdminCommand extends Command
             required: 'Имя обязательно для заполнения',
         );
 
-        $email = text(
-            label: 'Email',
-            placeholder: 'admin@example.com',
-            required: 'Email обязателен для заполнения',
+        $username = text(
+            label: 'Логин',
+            placeholder: 'admin',
+            required: 'Логин обязателен для заполнения',
             validate: fn (string $value) => match (true) {
-                ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'Введите корректный email',
-                User::where('email', $value)->exists() => 'Пользователь с таким email уже существует',
+                ! preg_match('/^[a-zA-Z0-9_-]+$/', $value) => 'Логин может содержать только латиницу, цифры, символы _ и -',
+                User::where('username', $value)->exists() => 'Пользователь с таким логином уже существует',
                 default => null,
             },
         );
@@ -60,12 +60,12 @@ class CreateAdminCommand extends Command
 
         $user = User::create([
             'name' => $name,
-            'email' => $email,
+            'username' => $username,
             'password' => $password,
             'role_id' => $adminRole->id,
         ]);
 
-        info("Администратор «{$user->name}» ({$user->email}) успешно создан с ID {$user->id}.");
+        info("Администратор «{$user->name}» ({$user->username}) успешно создан с ID {$user->id}.");
 
         return self::SUCCESS;
     }

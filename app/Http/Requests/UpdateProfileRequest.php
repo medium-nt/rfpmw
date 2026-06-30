@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class UpdateProfileRequest extends FormRequest
     }
 
     /**
-     * Правила обновления своего профиля (имя, email). Роль недоступна — неизменяема.
+     * Правила обновления своего профиля (имя, логин, email). Роль недоступна — неизменяема.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -24,7 +25,8 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$this->user()->id],
+            'username' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/u', Rule::unique('users', 'username')->ignore($this->user()->id)],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user()->id)],
         ];
     }
 }

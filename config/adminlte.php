@@ -270,7 +270,7 @@ return [
     'login_url' => 'login',
     'register_url' => false,
     'password_reset_url' => false,
-    'password_email_url' => 'password/email',
+    'password_email_url' => false,
     'profile_url' => false,
     'disable_darkmode_routes' => false,
 

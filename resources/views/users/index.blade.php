@@ -20,7 +20,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Имя</th>
-                        <th>Email</th>
+                        <th>Логин</th>
                         <th>Роль</th>
                         <th class="text-right">Действия</th>
                     </tr>
@@ -30,7 +30,7 @@
                         <tr>
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->username }}</td>
                             <td>{{ $user->role->title }}</td>
                             <td class="text-right">
                                 <a href="{{ route('users.edit', $user) }}" class="btn btn-info btn-sm">
