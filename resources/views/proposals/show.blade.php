@@ -59,40 +59,6 @@
     {{-- Заготовка: позиции КП (Items) будут добавлены отдельной задачей. --}}
     {{-- <div class="card card-info card-outline mt-3"> ... Позиции КП ... </div> --}}
 
-    <div class="card card-info card-outline mt-3">
-        <div class="card-header">
-            <h3 class="card-title">События</h3>
-        </div>
-        <div class="card-body table-responsive p-0">
-            <table class="table table-bordered table-striped mb-0">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Тип</th>
-                        <th>Сотрудник</th>
-                        <th>Тема</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($proposal->events as $event)
-                        <tr>
-                            <td>
-                                <a href="{{ route('events.show', $event) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
-                            </td>
-                            <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
-                            <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
-                            <td>{{ $event->subject ?? '—' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-3">События отсутствуют.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
     <div class="card card-danger mt-3">
         <div class="card-header">
             <h3 class="card-title">Удаление КП</h3>

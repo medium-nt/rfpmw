@@ -67,7 +67,7 @@ class RequestController extends Controller
     {
         $this->authorizeRequestAccess($request);
 
-        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'events.employedPerson.contactPerson', 'events.user']);
+        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user']);
 
         return view('requests.show', compact('request'));
     }
