@@ -33,5 +33,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(ContractorSeeder::class);
+        $this->call(ItemSeeder::class);
     }
 }

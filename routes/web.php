@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\EmployedPersonController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProposalController;
@@ -35,6 +36,19 @@ Route::middleware(['auth', 'can:is-admin'])
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth', 'can:is-admin'])
+    ->name('items.')
+    ->prefix('items')
+    ->group(function () {
+        Route::get('/', [ItemController::class, 'index'])->name('index');
+        Route::get('/create', [ItemController::class, 'create'])->name('create');
+        Route::post('/', [ItemController::class, 'store'])->name('store');
+        Route::get('/{item}/edit', [ItemController::class, 'edit'])->name('edit');
+        Route::put('/{item}', [ItemController::class, 'update'])->name('update');
+        Route::get('/{item}', [ItemController::class, 'show'])->name('show');
+        Route::delete('/{item}', [ItemController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])
