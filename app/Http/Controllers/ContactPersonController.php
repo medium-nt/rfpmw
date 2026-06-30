@@ -15,14 +15,20 @@ class ContactPersonController extends Controller
 {
     /**
      * Read-only список контактных лиц: админ видит всех, менеджер — только людей своих контрагентов.
+     *
+     * Колонка «Контрагенты» для менеджера также скоупирована: у лица, работающего в нескольких
+     * компаниях, показываются только контрагенты этого менеджера (изоляция от чужих клиентов).
      */
     public function index(): View
     {
         $people = ContactPerson::query()
-            ->with('employedPeople.contractor')
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPeople', fn ($qq) => $qq->whereRelation('contractor', 'user_id', auth()->id()));
             })
+            ->with(['employedPeople' => function ($q): void {
+                $q->with('contractor')
+                    ->when(auth()->user()->isManager(), fn ($qq) => $qq->whereHas('contractor', fn ($c) => $c->where('user_id', auth()->id())));
+            }])
             ->orderBy('id')
             ->paginate(10);
 
