@@ -200,4 +200,57 @@ class ContactPersonCrudTest extends TestCase
 
         return $person->fresh();
     }
+
+    /**
+     * Привязывает существующее контактное лицо к заданному контрагенту.
+     */
+    private function attachExistingPersonTo(ContactPerson $person, Contractor $contractor): void
+    {
+        EmployedPerson::factory()->create([
+            'contact_person_id' => $person->id,
+            'contractor_id' => $contractor->id,
+        ]);
+    }
+
+    /**
+     * Менеджер видит только своих контрагентов в списке для контактного лица, работающего в нескольких компаниях.
+     */
+    public function test_manager_index_shows_only_own_contractors_for_shared_person(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $ownContractor = Contractor::factory()->for($manager, 'user')->create(['name' => 'ООО СвойКлиент']);
+
+        $otherManager = User::factory()->manager()->create();
+        $otherContractor = Contractor::factory()->for($otherManager, 'user')->create(['name' => 'ООО ЧужойКлиентЗет']);
+
+        $person = $this->personAttachedTo($ownContractor);
+        $this->attachExistingPersonTo($person, $otherContractor);
+
+        $this->actingAs($manager)->get(route('contact-people.index'))
+            ->assertOk()
+            ->assertSee('ООО СвойКлиент')
+            ->assertDontSee('ООО ЧужойКлиентЗет');
+    }
+
+    /**
+     * Админ видит всех контрагентов в списке для контактного лица, работающего в нескольких компаниях.
+     */
+    public function test_admin_index_shows_all_contractors_for_shared_person(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $manager = User::factory()->manager()->create();
+        $ownContractor = Contractor::factory()->for($manager, 'user')->create(['name' => 'ООО СвойКлиент']);
+
+        $otherManager = User::factory()->manager()->create();
+        $otherContractor = Contractor::factory()->for($otherManager, 'user')->create(['name' => 'ООО ЧужойКлиентЗет']);
+
+        $person = $this->personAttachedTo($ownContractor);
+        $this->attachExistingPersonTo($person, $otherContractor);
+
+        $this->actingAs($admin)->get(route('contact-people.index'))
+            ->assertOk()
+            ->assertSee('ООО СвойКлиент')
+            ->assertSee('ООО ЧужойКлиентЗет');
+    }
 }
