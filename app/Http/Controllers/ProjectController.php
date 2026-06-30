@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Contractor;
+use App\Models\Item;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -63,15 +64,17 @@ class ProjectController extends Controller
     }
 
     /**
-     * Карточка проекта с данными, ответственным и контрагентом.
+     * Карточка проекта с данными, ответственным, позициями и контрагентом.
      */
     public function show(Project $project): View
     {
         $this->authorizeProjectAccess($project);
 
-        $project->load(['contractor.user', 'responsiblePerson.contactPerson', 'events.employedPerson.contactPerson', 'events.user']);
+        $project->load(['contractor.user', 'responsiblePerson.contactPerson', 'events.employedPerson.contactPerson', 'events.user', 'projectItems.item.vendor']);
 
-        return view('projects.show', compact('project'));
+        $items = Item::forSelect();
+
+        return view('projects.show', compact('project', 'items'));
     }
 
     /**

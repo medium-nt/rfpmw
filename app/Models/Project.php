@@ -62,6 +62,16 @@ class Project extends Model
     }
 
     /**
+     * Пересчитывает usd_value проекта как Σ(quantity × price) по позициям.
+     */
+    public function recalcUsdValue(): void
+    {
+        $total = (float) $this->projectItems->sum(fn (ProjectItem $item) => (float) $item->price * (int) $item->quantity);
+
+        $this->forceFill(['usd_value' => $total])->save();
+    }
+
+    /**
      * События, привязанные к проекту.
      *
      * @return HasMany<Event>

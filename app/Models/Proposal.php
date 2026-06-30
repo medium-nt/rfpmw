@@ -60,6 +60,16 @@ class Proposal extends Model
     }
 
     /**
+     * Пересчитывает usd_value КП как Σ(quantity × price) по позициям.
+     */
+    public function recalcUsdValue(): void
+    {
+        $total = (float) $this->proposalItems->sum(fn (ProposalItem $item) => (float) $item->price * (int) $item->quantity);
+
+        $this->forceFill(['usd_value' => $total])->save();
+    }
+
+    /**
      * События, привязанные к КП.
      *
      * @return HasMany<Event>

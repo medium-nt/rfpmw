@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProposalRequest;
 use App\Http\Requests\UpdateProposalRequest;
 use App\Models\Contractor;
+use App\Models\Item;
 use App\Models\Proposal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -67,9 +68,11 @@ class ProposalController extends Controller
     {
         $this->authorizeProposalAccess($proposal);
 
-        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user']);
+        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'proposalItems.item.vendor']);
 
-        return view('proposals.show', compact('proposal'));
+        $items = Item::forSelect();
+
+        return view('proposals.show', compact('proposal', 'items'));
     }
 
     /**
