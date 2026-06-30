@@ -1,0 +1,64 @@
+@extends('layouts.admin')
+
+@section('title', 'Артикул')
+
+@section('content_header')
+    <h1>Артикул</h1>
+@endsection
+
+@section('content')
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="30%">ID</th>
+                            <td>{{ $item->id }}</td>
+                        </tr>
+                        <tr>
+                            <th>SKU (артикул)</th>
+                            <td>{{ $item->sku }}</td>
+                        </tr>
+                        <tr>
+                            <th>Вендор</th>
+                            <td>
+                                @if ($item->vendor)
+                                    <a href="{{ route('contractors.show', $item->vendor) }}">{{ $item->vendor->name }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Описание</th>
+                            <td>{{ $item->description ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Создан</th>
+                            <td>{{ $item->created_at->format('d.m.Y H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Обновлён</th>
+                            <td>{{ $item->updated_at->format('d.m.Y H:i') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="{{ route('items.edit', $item) }}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Изменить
+                </a>
+                <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить артикул?')">Удалить</button>
+                </form>
+                <a href="{{ route('items.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </a>
+            </div>
+        </div>
+    </div>
+@endsection

@@ -360,6 +360,12 @@ return [
                     'icon' => 'fas fa-fw fa-users',
                     'can' => 'is-admin',
                 ],
+                [
+                    'text' => 'Артикулы',
+                    'route' => 'items.index',
+                    'icon' => 'fas fa-fw fa-barcode',
+                    'can' => 'is-admin',
+                ],
             ],
         ],
     ],
