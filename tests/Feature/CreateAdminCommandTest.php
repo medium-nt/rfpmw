@@ -18,11 +18,11 @@ class CreateAdminCommandTest extends TestCase
     {
         $this->artisan('app:create-admin')
             ->expectsQuestion('Имя администратора', 'Иван Администраторов')
-            ->expectsQuestion('Email', 'admin@example.com')
+            ->expectsQuestion('Логин', 'admin')
             ->expectsQuestion('Пароль', 'secret123')
             ->assertSuccessful();
 
-        $user = User::where('email', 'admin@example.com')->first();
+        $user = User::where('username', 'admin')->first();
 
         $this->assertNotNull($user);
         $this->assertTrue($user->isAdmin());
@@ -37,7 +37,7 @@ class CreateAdminCommandTest extends TestCase
 
         $this->artisan('app:create-admin')
             ->expectsQuestion('Имя администратора', 'Иван Администраторов')
-            ->expectsQuestion('Email', 'admin@example.com')
+            ->expectsQuestion('Логин', 'admin')
             ->expectsQuestion('Пароль', 'secret123')
             ->assertFailed();
     }

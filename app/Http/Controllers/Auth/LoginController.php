@@ -37,4 +37,12 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    /**
+     * Поле идентификации пользователя при входе — логин по username вместо email.
+     */
+    public function username(): string
+    {
+        return 'username';
+    }
 }

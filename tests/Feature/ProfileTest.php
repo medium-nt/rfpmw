@@ -57,6 +57,7 @@ class ProfileTest extends TestCase
         $response = $this->actingAs($user)->put(route('profile.update'), [
             'name' => 'Новое Имя',
             'email' => 'after@example.com',
+            'username' => $user->username,
         ]);
 
         $response->assertRedirect(route('profile.edit'));
@@ -78,6 +79,7 @@ class ProfileTest extends TestCase
         $response = $this->actingAs($user)->put(route('profile.update'), [
             'name' => $user->name,
             'email' => 'keep@example.com',
+            'username' => $user->username,
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -94,6 +96,7 @@ class ProfileTest extends TestCase
         $response = $this->actingAs($user)->put(route('profile.update'), [
             'name' => $user->name,
             'email' => 'taken@example.com',
+            'username' => $user->username,
         ]);
 
         $response->assertSessionHasErrors(['email']);

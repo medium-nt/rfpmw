@@ -16,12 +16,12 @@ class UserManagementTest extends TestCase
     public function test_admin_can_view_users_list(): void
     {
         $admin = User::factory()->admin()->create();
-        $other = User::factory()->create(['email' => 'other@example.com']);
+        $other = User::factory()->create(['username' => 'other_user']);
 
         $response = $this->actingAs($admin)->get(route('users.index'));
 
         $response->assertStatus(200);
-        $response->assertSee($other->email);
+        $response->assertSee($other->username);
     }
 
     /**
@@ -61,6 +61,7 @@ class UserManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('users.store'), [
             'name' => 'Новый Юзер',
             'email' => 'new@example.com',
+            'username' => 'new_user',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'role_id' => 1,
@@ -69,6 +70,7 @@ class UserManagementTest extends TestCase
         $response->assertRedirect(route('users.index'));
         $this->assertDatabaseHas('users', [
             'email' => 'new@example.com',
+            'username' => 'new_user',
             'name' => 'Новый Юзер',
             'role_id' => 1,
         ]);
@@ -83,7 +85,7 @@ class UserManagementTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('users.store'), []);
 
-        $response->assertSessionHasErrors(['name', 'email', 'password', 'role_id']);
+        $response->assertSessionHasErrors(['name', 'username', 'password', 'role_id']);
     }
 
     /**
@@ -97,6 +99,7 @@ class UserManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('users.store'), [
             'name' => 'Юзер',
             'email' => 'taken@example.com',
+            'username' => 'unique_login',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'role_id' => 1,
@@ -116,6 +119,7 @@ class UserManagementTest extends TestCase
         $response = $this->actingAs($admin)->put(route('users.update', $user), [
             'name' => 'Новое Имя',
             'email' => 'after@example.com',
+            'username' => $user->username,
         ]);
 
         $response->assertRedirect(route('users.index'));
@@ -137,6 +141,7 @@ class UserManagementTest extends TestCase
         $response = $this->actingAs($admin)->put(route('users.update', $user), [
             'name' => $user->name,
             'email' => 'keep@example.com',
+            'username' => $user->username,
         ]);
 
         $response->assertSessionHasNoErrors();
@@ -153,6 +158,7 @@ class UserManagementTest extends TestCase
         $this->actingAs($admin)->put(route('users.update', $user), [
             'name' => $user->name,
             'email' => $user->email,
+            'username' => $user->username,
             'role_id' => 2, // попытка сделать админом — должна быть проигнорирована
         ]);
 
@@ -174,6 +180,7 @@ class UserManagementTest extends TestCase
         $this->actingAs($admin)->put(route('users.update', $user), [
             'name' => 'Имя Без Пароля',
             'email' => $user->email,
+            'username' => $user->username,
             'password' => '',
             'password_confirmation' => '',
         ]);

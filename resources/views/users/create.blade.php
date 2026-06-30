@@ -33,10 +33,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="username">Логин <span class="text-danger">*</span></label>
+                    <input type="text" id="username" name="username"
+                        class="form-control @error('username') is-invalid @enderror"
+                        value="{{ old('username') }}" required autofocus>
+                    @error('username')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email (опционально)</label>
                     <input type="email" id="email" name="email"
                         class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email') }}" required>
+                        value="{{ old('email') }}" placeholder="user@example.com">
                     @error('email')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

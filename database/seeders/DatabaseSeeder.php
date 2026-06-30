@@ -20,12 +20,14 @@ class DatabaseSeeder extends Seeder
         // Учётные записи для первого входа.
         User::factory()->admin()->create([
             'name' => 'Админ',
+            'username' => 'admin',
             'email' => '1@1.ru',
             'password' => '111111',
         ]);
 
         User::factory()->manager()->create([
             'name' => 'Менеджер',
+            'username' => 'manager',
             'email' => '2@2.ru',
             'password' => '222222',
         ]);

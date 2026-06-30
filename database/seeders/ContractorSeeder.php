@@ -12,14 +12,14 @@ use Illuminate\Database\Seeder;
 class ContractorSeeder extends Seeder
 {
     /**
-     * Создаёт 12 контрагентов (по 3 каждого типа), закрепляя их за менеджером 2@2.ru.
+     * Создаёт 12 контрагентов (по 3 каждого типа), закрепляя их за менеджером (username=manager).
      */
     public function run(): void
     {
-        $managerId = User::where('email', '2@2.ru')->value('id');
+        $managerId = User::where('username', 'manager')->value('id');
 
         if ($managerId === null) {
-            $this->command->error('Менеджер 2@2.ru не найден — сначала запустите DatabaseSeeder.');
+            $this->command->error('Менеджер (username=manager) не найден — сначала запустите DatabaseSeeder.');
 
             return;
         }

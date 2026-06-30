@@ -34,10 +34,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="username">Логин <span class="text-danger">*</span></label>
+                    <input type="text" id="username" name="username"
+                        class="form-control @error('username') is-invalid @enderror"
+                        value="{{ old('username', $user->username) }}" required>
+                    @error('username')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email (опционально)</label>
                     <input type="email" id="email" name="email"
                         class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email', $user->email) }}" required>
+                        value="{{ old('email', $user->email) }}" placeholder="оставьте пустым, чтобы не указывать">
                     @error('email')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
