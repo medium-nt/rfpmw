@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRequestRequest;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\Contractor;
+use App\Models\Item;
 use App\Models\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -67,9 +68,11 @@ class RequestController extends Controller
     {
         $this->authorizeRequestAccess($request);
 
-        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user']);
+        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'requestItems.item.vendor']);
 
-        return view('requests.show', compact('request'));
+        $items = Item::forSelect();
+
+        return view('requests.show', compact('request', 'items'));
     }
 
     /**

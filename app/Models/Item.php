@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\ItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,5 +55,15 @@ class Item extends Model
     public function proposalItems(): HasMany
     {
         return $this->hasMany(ProposalItem::class);
+    }
+
+    /**
+     * Список артикулов для селекта (с вендором, по sku) — без soft-deleted.
+     *
+     * @return Collection<int, Item>
+     */
+    public static function forSelect(): Collection
+    {
+        return static::with('vendor')->orderBy('sku')->get();
     }
 }

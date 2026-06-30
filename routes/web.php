@@ -8,8 +8,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectItemController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ProposalItemController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\RequestItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,6 +103,16 @@ Route::middleware(['auth'])
     });
 
 Route::middleware(['auth'])
+    ->name('project-items.')
+    ->prefix('projects/{project}/items')
+    ->group(function () {
+        Route::post('/', [ProjectItemController::class, 'store'])->name('store');
+        Route::get('/{project_item}/edit', [ProjectItemController::class, 'edit'])->name('edit');
+        Route::put('/{project_item}', [ProjectItemController::class, 'update'])->name('update');
+        Route::delete('/{project_item}', [ProjectItemController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
     ->name('requests.')
     ->group(function () {
         Route::get('contractors/{contractor}/requests/create', [RequestController::class, 'create'])->name('create');
@@ -112,6 +125,16 @@ Route::middleware(['auth'])
     });
 
 Route::middleware(['auth'])
+    ->name('request-items.')
+    ->prefix('requests/{request}/items')
+    ->group(function () {
+        Route::post('/', [RequestItemController::class, 'store'])->name('store');
+        Route::get('/{request_item}/edit', [RequestItemController::class, 'edit'])->name('edit');
+        Route::put('/{request_item}', [RequestItemController::class, 'update'])->name('update');
+        Route::delete('/{request_item}', [RequestItemController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
     ->name('proposals.')
     ->group(function () {
         Route::get('contractors/{contractor}/proposals/create', [ProposalController::class, 'create'])->name('create');
@@ -121,6 +144,16 @@ Route::middleware(['auth'])
         Route::get('proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('edit');
         Route::put('proposals/{proposal}', [ProposalController::class, 'update'])->name('update');
         Route::delete('proposals/{proposal}', [ProposalController::class, 'destroy'])->name('destroy');
+    });
+
+Route::middleware(['auth'])
+    ->name('proposal-items.')
+    ->prefix('proposals/{proposal}/items')
+    ->group(function () {
+        Route::post('/', [ProposalItemController::class, 'store'])->name('store');
+        Route::get('/{proposal_item}/edit', [ProposalItemController::class, 'edit'])->name('edit');
+        Route::put('/{proposal_item}', [ProposalItemController::class, 'update'])->name('update');
+        Route::delete('/{proposal_item}', [ProposalItemController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware(['auth'])

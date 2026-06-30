@@ -44,12 +44,27 @@ class ProjectItem extends Model
     }
 
     /**
-     * Артикул позиции.
+     * Артикул позиции (с withTrashed — удалённый артикул остаётся доступен для истории).
      *
      * @return BelongsTo<Item, self>
      */
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->withTrashed();
+    }
+
+    /**
+     * Справочник статусов производственной позиции для выбора в формах.
+     *
+     * @return array<string, string>
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            'planned' => 'Запланировано',
+            'in_production' => 'В производстве',
+            'produced' => 'Произведено',
+            'shipped' => 'Отгружено',
+        ];
     }
 }

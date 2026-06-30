@@ -60,6 +60,16 @@ class Request extends Model
     }
 
     /**
+     * Пересчитывает usd_value запроса как Σ(quantity × price) по позициям.
+     */
+    public function recalcUsdValue(): void
+    {
+        $total = (float) $this->requestItems->sum(fn (RequestItem $item) => (float) $item->price * (int) $item->quantity);
+
+        $this->forceFill(['usd_value' => $total])->save();
+    }
+
+    /**
      * События, привязанные к запросу.
      *
      * @return HasMany<Event>

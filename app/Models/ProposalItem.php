@@ -40,12 +40,12 @@ class ProposalItem extends Model
     }
 
     /**
-     * Артикул позиции.
+     * Артикул позиции (с withTrashed — удалённый артикул остаётся доступен для истории).
      *
      * @return BelongsTo<Item, self>
      */
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->withTrashed();
     }
 }
