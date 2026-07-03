@@ -23,21 +23,21 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th class="d-none d-md-table-cell">ID</th>
                         <th>Название</th>
                         <th>ИНН</th>
-                        <th>Тип</th>
-                        <th>Менеджер</th>
+                        <th class="d-none d-md-table-cell">Тип</th>
+                        <th class="d-none d-md-table-cell">Менеджер</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($contractors as $contractor)
                         <tr>
-                            <td>{{ $contractor->id }}</td>
+                            <td class="d-none d-md-table-cell">{{ $contractor->id }}</td>
                             <td><a href="{{ route('contractors.show', $contractor) }}">{{ $contractor->name }}</a></td>
                             <td>{{ $contractor->inn }}</td>
-                            <td>{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>
-                            <td>{{ $contractor->user?->name ?? '—' }}</td>
+                            <td class="d-none d-md-table-cell">{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>
+                            <td class="d-none d-md-table-cell">{{ $contractor->user?->name ?? '—' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
