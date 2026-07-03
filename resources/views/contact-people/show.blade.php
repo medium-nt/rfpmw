@@ -9,9 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header d-flex flex-wrap align-items-center">
-            <a href="{{ route('contact-people.index') }}" class="btn btn-default btn-sm mr-2">
-                <i class="fas fa-arrow-left"></i> К списку
-            </a>
+            @include('partials.back-button', ['fallbackRoute' => route('contact-people.index')])
             <a href="{{ route('contact-people.edit', $person) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-edit"></i> Редактировать данные
             </a>
@@ -51,7 +49,7 @@
                     @forelse ($employments as $employed)
                         <tr>
                             <td>
-                                <a href="{{ route('contractors.show', $employed->contractor) }}">{{ $employed->contractor->name }}</a>
+                                <a href="{{ route('contractors.show', [$employed->contractor, 'from' => '/' . request()->path()]) }}">{{ $employed->contractor->name }}</a>
                             </td>
                             <td>{{ \App\Models\Contractor::getTypes()[$employed->contractor->type] ?? $employed->contractor->type }}</td>
                             <td>
