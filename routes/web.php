@@ -63,7 +63,7 @@ Route::middleware(['auth'])
         Route::post('/', [ContractorController::class, 'store'])->name('store');
         Route::get('/{contractor}/edit', [ContractorController::class, 'edit'])->name('edit');
         Route::put('/{contractor}', [ContractorController::class, 'update'])->name('update');
-        Route::delete('/{contractor}', [ContractorController::class, 'destroy'])->name('destroy');
+        Route::delete('/{contractor}', [ContractorController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
         Route::get('/trashed', [ContractorController::class, 'trashed'])->name('trashed');
         Route::post('/{id}/restore', [ContractorController::class, 'restore'])->name('restore');
         Route::get('/{contractor}', [ContractorController::class, 'show'])->name('show');
@@ -99,7 +99,7 @@ Route::middleware(['auth'])
         Route::get('projects/{project}', [ProjectController::class, 'show'])->name('show');
         Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('edit');
         Route::put('projects/{project}', [ProjectController::class, 'update'])->name('update');
-        Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
     });
 
 Route::middleware(['auth'])
@@ -121,7 +121,7 @@ Route::middleware(['auth'])
         Route::get('requests/{request}', [RequestController::class, 'show'])->name('show');
         Route::get('requests/{request}/edit', [RequestController::class, 'edit'])->name('edit');
         Route::put('requests/{request}', [RequestController::class, 'update'])->name('update');
-        Route::delete('requests/{request}', [RequestController::class, 'destroy'])->name('destroy');
+        Route::delete('requests/{request}', [RequestController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
     });
 
 Route::middleware(['auth'])
@@ -143,7 +143,7 @@ Route::middleware(['auth'])
         Route::get('proposals/{proposal}', [ProposalController::class, 'show'])->name('show');
         Route::get('proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('edit');
         Route::put('proposals/{proposal}', [ProposalController::class, 'update'])->name('update');
-        Route::delete('proposals/{proposal}', [ProposalController::class, 'destroy'])->name('destroy');
+        Route::delete('proposals/{proposal}', [ProposalController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
     });
 
 Route::middleware(['auth'])
@@ -165,7 +165,7 @@ Route::middleware(['auth'])
         Route::get('events/{event}', [EventController::class, 'show'])->name('show');
         Route::get('events/{event}/edit', [EventController::class, 'edit'])->name('edit');
         Route::put('events/{event}', [EventController::class, 'update'])->name('update');
-        Route::delete('events/{event}', [EventController::class, 'destroy'])->name('destroy');
+        Route::delete('events/{event}', [EventController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
     });
 
 Route::middleware(['auth'])

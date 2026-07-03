@@ -50,11 +50,13 @@
                 <a href="{{ route('items.edit', $item) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Изменить
                 </a>
+                @can('is-admin')
                 <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить артикул?')">Удалить</button>
                 </form>
+                @endcan
                 <a href="{{ route('items.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Назад
                 </a>
