@@ -12,7 +12,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Дата</th>
                         <th>Тип</th>
                         <th>Сотрудник</th>
@@ -26,9 +25,8 @@
                     @forelse ($events as $event)
                         <tr>
                             <td>
-                                <a href="{{ route('events.show', $event) }}">№{{ $event->id }}</a>
+                                <a href="{{ route('events.show', $event) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $event->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
                             <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>
@@ -50,7 +48,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">События не найдены.</td>
+                            <td colspan="7" class="text-center text-muted">События не найдены.</td>
                         </tr>
                     @endforelse
                 </tbody>
