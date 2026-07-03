@@ -23,7 +23,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th class="d-none d-md-table-cell">ID</th>
                         <th>Название</th>
                         <th>ИНН</th>
                         <th class="d-none d-md-table-cell">Тип</th>
@@ -33,7 +32,6 @@
                 <tbody>
                     @foreach ($contractors as $contractor)
                         <tr>
-                            <td class="d-none d-md-table-cell">{{ $contractor->id }}</td>
                             <td><a href="{{ route('contractors.show', $contractor) }}">{{ $contractor->name }}</a></td>
                             <td>{{ $contractor->inn }}</td>
                             <td class="d-none d-md-table-cell">{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>

@@ -12,7 +12,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Дата</th>
                         <th>Сотрудник</th>
                         <th>Контрагент</th>
@@ -24,9 +23,8 @@
                     @forelse ($proposals as $proposal)
                         <tr>
                             <td>
-                                <a href="{{ route('proposals.show', $proposal) }}">№{{ $proposal->id }}</a>
+                                <a href="{{ route('proposals.show', $proposal) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $proposal->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>
                                 <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}">{{ $proposal->employedPerson?->contractor?->name ?? '—' }}</a>

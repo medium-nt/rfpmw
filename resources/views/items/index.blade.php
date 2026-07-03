@@ -18,7 +18,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>SKU (артикул)</th>
                         <th>Вендор</th>
                         <th>Описание</th>
@@ -27,7 +26,6 @@
                 <tbody>
                     @foreach ($items as $item)
                         <tr>
-                            <td>{{ $item->id }}</td>
                             <td><a href="{{ route('items.show', $item) }}">{{ $item->sku }}</a></td>
                             <td>{{ $item->vendor?->name ?? '—' }}</td>
                             <td>{{ Str::limit($item->description, 100) ?? '—' }}</td>

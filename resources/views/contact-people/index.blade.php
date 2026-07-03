@@ -12,7 +12,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>ФИО</th>
                         <th>Телефон</th>
                         <th>Email</th>
@@ -22,7 +21,6 @@
                 <tbody>
                     @forelse ($people as $person)
                         <tr>
-                            <td>{{ $person->id }}</td>
                             <td>
                                 <a href="{{ route('contact-people.show', $person) }}">{{ $person->fio }}</a>
                             </td>

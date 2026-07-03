@@ -12,7 +12,6 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Название</th>
                         <th>Контрагент</th>
                         <th>Дата выхода в серию</th>
@@ -23,7 +22,6 @@
                 <tbody>
                     @forelse ($projects as $project)
                         <tr>
-                            <td>{{ $project->id }}</td>
                             <td>
                                 <a href="{{ route('projects.show', $project) }}">{{ $project->name }}</a>
                             </td>

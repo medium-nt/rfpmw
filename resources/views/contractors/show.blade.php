@@ -56,7 +56,6 @@
             <table class="table table-bordered table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>№</th>
                         <th>Дата</th>
                         <th>Тип</th>
                         <th>Сотрудник</th>
@@ -67,16 +66,15 @@
                     @forelse ($events as $event)
                         <tr>
                             <td>
-                                <a href="{{ route('events.show', [$event, 'from' => '/' . request()->path()]) }}">№{{ $event->id }}</a>
+                                <a href="{{ route('events.show', [$event, 'from' => '/' . request()->path()]) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $event->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
                             <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>{{ $event->subject ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-3">События отсутствуют.</td>
+                            <td colspan="4" class="text-center text-muted py-3">События отсутствуют.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -233,7 +231,6 @@
             <table class="table table-bordered table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>№</th>
                         <th>Дата</th>
                         <th>Сотрудник</th>
                         <th>Статус</th>
@@ -244,16 +241,15 @@
                     @forelse ($requests as $request)
                         <tr>
                             <td>
-                                <a href="{{ route('requests.show', [$request, 'from' => '/' . request()->path()]) }}">№{{ $request->id }}</a>
+                                <a href="{{ route('requests.show', [$request, 'from' => '/' . request()->path()]) }}">{{ $request->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $request->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ $request->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
                             <td>{{ $request->user?->name ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-3">Запросы отсутствуют.</td>
+                            <td colspan="4" class="text-center text-muted py-3">Запросы отсутствуют.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -274,7 +270,6 @@
             <table class="table table-bordered table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>№</th>
                         <th>Дата</th>
                         <th>Сотрудник</th>
                         <th>Статус</th>
@@ -285,16 +280,15 @@
                     @forelse ($proposals as $proposal)
                         <tr>
                             <td>
-                                <a href="{{ route('proposals.show', [$proposal, 'from' => '/' . request()->path()]) }}">№{{ $proposal->id }}</a>
+                                <a href="{{ route('proposals.show', [$proposal, 'from' => '/' . request()->path()]) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $proposal->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
                             <td>{{ $proposal->user?->name ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-3">КП отсутствуют.</td>
+                            <td colspan="4" class="text-center text-muted py-3">КП отсутствуют.</td>
                         </tr>
                     @endforelse
                 </tbody>
