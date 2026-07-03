@@ -71,6 +71,7 @@
         </div>
     </div>
 
+    @can('is-admin')
     <div class="card card-danger mt-3">
         <div class="card-header">
             <h3 class="card-title">Удаление события</h3>
@@ -86,4 +87,5 @@
             </form>
         </div>
     </div>
+    @endcan
 @endsection
