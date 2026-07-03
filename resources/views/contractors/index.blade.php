@@ -28,7 +28,6 @@
                         <th>ИНН</th>
                         <th>Тип</th>
                         <th>Менеджер</th>
-                        <th class="text-right">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,11 +38,6 @@
                             <td>{{ $contractor->inn }}</td>
                             <td>{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>
                             <td>{{ $contractor->user?->name ?? '—' }}</td>
-                            <td class="text-right">
-                                <a href="{{ route('contractors.show', $contractor) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-folder-open"></i> Открыть
-                                </a>
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>
