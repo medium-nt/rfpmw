@@ -9,9 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header d-flex flex-wrap align-items-center">
-            <a href="{{ route('contractors.index') }}" class="btn btn-default btn-sm mr-2">
-                <i class="fas fa-arrow-left"></i> К списку
-            </a>
+            @include('partials.back-button', ['fallbackRoute' => route('contractors.index')])
             <a href="{{ route('contractors.edit', $contractor) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-edit"></i> Редактировать
             </a>
@@ -69,7 +67,7 @@
                     @forelse ($events as $event)
                         <tr>
                             <td>
-                                <a href="{{ route('events.show', $event) }}">№{{ $event->id }}</a>
+                                <a href="{{ route('events.show', [$event, 'from' => '/' . request()->path()]) }}">№{{ $event->id }}</a>
                             </td>
                             <td>{{ $event->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
@@ -120,7 +118,7 @@
                         @forelse ($contractor->employedPeople as $employed)
                             <tr>
                                 <td>
-                                    <a href="{{ route('contact-people.show', $employed->contactPerson) }}">
+                                    <a href="{{ route('contact-people.show', [$employed->contactPerson, 'from' => '/' . request()->path()]) }}">
                                         {{ $employed->contactPerson->fio }}
                                     </a>
                                 </td>
@@ -206,7 +204,7 @@
                     @forelse ($contractor->projects as $project)
                         <tr>
                             <td>
-                                <a href="{{ route('projects.show', $project) }}">{{ $project->name }}</a>
+                                <a href="{{ route('projects.show', [$project, 'from' => '/' . request()->path()]) }}">{{ $project->name }}</a>
                             </td>
                             <td>{{ $project->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status ?? '—' }}</td>
@@ -246,7 +244,7 @@
                     @forelse ($requests as $request)
                         <tr>
                             <td>
-                                <a href="{{ route('requests.show', $request) }}">№{{ $request->id }}</a>
+                                <a href="{{ route('requests.show', [$request, 'from' => '/' . request()->path()]) }}">№{{ $request->id }}</a>
                             </td>
                             <td>{{ $request->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ $request->employedPerson?->contactPerson?->fio ?? '—' }}</td>
@@ -287,7 +285,7 @@
                     @forelse ($proposals as $proposal)
                         <tr>
                             <td>
-                                <a href="{{ route('proposals.show', $proposal) }}">№{{ $proposal->id }}</a>
+                                <a href="{{ route('proposals.show', [$proposal, 'from' => '/' . request()->path()]) }}">№{{ $proposal->id }}</a>
                             </td>
                             <td>{{ $proposal->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>

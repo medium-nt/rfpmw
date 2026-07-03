@@ -9,9 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header d-flex flex-wrap align-items-center">
-            <a href="{{ route('requests.index') }}" class="btn btn-default btn-sm mr-2">
-                <i class="fas fa-arrow-left"></i> К списку
-            </a>
+            @include('partials.back-button', ['fallbackRoute' => route('requests.index')])
             <a href="{{ route('requests.edit', $request) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-edit"></i> Редактировать
             </a>
@@ -44,7 +42,7 @@
 
                 <dt class="col-sm-3 col-md-2">Контрагент</dt>
                 <dd class="col-sm-9 col-md-10">
-                    <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}">{{ $request->employedPerson->contractor?->name }}</a>
+                    <a href="{{ route('contractors.show', [$request->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $request->employedPerson->contractor?->name }}</a>
                 </dd>
 
                 <dt class="col-sm-3 col-md-2">Менеджер</dt>
@@ -92,7 +90,7 @@
                                             <span class="text-muted">{{ $requestItem->item->sku }}</span>
                                             <span class="badge badge-secondary">удалён</span>
                                         @else
-                                            <a href="{{ route('items.show', $requestItem->item) }}">{{ $requestItem->item->sku }}</a>
+                                            <a href="{{ route('items.show', [$requestItem->item, 'from' => '/' . request()->path()]) }}">{{ $requestItem->item->sku }}</a>
                                         @endif
                                     @else
                                         <span class="text-muted">—</span>

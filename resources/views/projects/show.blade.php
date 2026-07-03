@@ -9,9 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header d-flex flex-wrap align-items-center">
-            <a href="{{ route('projects.index') }}" class="btn btn-default btn-sm mr-2">
-                <i class="fas fa-arrow-left"></i> К списку
-            </a>
+            @include('partials.back-button', ['fallbackRoute' => route('projects.index')])
             <a href="{{ route('projects.edit', $project) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-edit"></i> Редактировать
             </a>
@@ -23,7 +21,7 @@
 
                 <dt class="col-sm-3 col-md-2">Контрагент</dt>
                 <dd class="col-sm-9 col-md-10">
-                    <a href="{{ route('contractors.show', $project->contractor) }}">{{ $project->contractor->name }}</a>
+                    <a href="{{ route('contractors.show', [$project->contractor, 'from' => '/' . request()->path()]) }}">{{ $project->contractor->name }}</a>
                 </dd>
 
                 <dt class="col-sm-3 col-md-2">Дата выхода в серию</dt>
@@ -88,7 +86,7 @@
                                             <span class="text-muted">{{ $projectItem->item->sku }}</span>
                                             <span class="badge badge-secondary">удалён</span>
                                         @else
-                                            <a href="{{ route('items.show', $projectItem->item) }}">{{ $projectItem->item->sku }}</a>
+                                            <a href="{{ route('items.show', [$projectItem->item, 'from' => '/' . request()->path()]) }}">{{ $projectItem->item->sku }}</a>
                                         @endif
                                     @else
                                         <span class="text-muted">—</span>
@@ -210,7 +208,7 @@
                     @forelse ($project->events as $event)
                         <tr>
                             <td>
-                                <a href="{{ route('events.show', $event) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
+                                <a href="{{ route('events.show', [$event, 'from' => '/' . request()->path()]) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
                             <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
                             <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>

@@ -24,7 +24,7 @@
                             <th>Вендор</th>
                             <td>
                                 @if ($item->vendor)
-                                    <a href="{{ route('contractors.show', $item->vendor) }}">{{ $item->vendor->name }}</a>
+                                    <a href="{{ route('contractors.show', [$item->vendor, 'from' => '/' . request()->path()]) }}">{{ $item->vendor->name }}</a>
                                 @else
                                     —
                                 @endif
@@ -57,9 +57,7 @@
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить артикул?')">Удалить</button>
                 </form>
                 @endcan
-                <a href="{{ route('items.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Назад
-                </a>
+                @include('partials.back-button', ['fallbackRoute' => route('items.index')])
             </div>
         </div>
     </div>
