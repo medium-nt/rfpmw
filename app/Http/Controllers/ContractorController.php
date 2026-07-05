@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FindPartyRequest;
 use App\Http\Requests\StoreContractorRequest;
 use App\Http\Requests\UpdateContractorRequest;
 use App\Models\ContactPerson;
@@ -10,7 +11,11 @@ use App\Models\Event;
 use App\Models\Proposal;
 use App\Models\Request;
 use App\Models\User;
+use App\Services\DaData\DadataService;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class ContractorController extends Controller
@@ -38,6 +43,33 @@ class ContractorController extends Controller
         $types = Contractor::getTypes();
 
         return view('contractors.create', compact('managers', 'types'));
+    }
+
+    /**
+     * Поиск компании в DaData по ИНН: возвращает JSON-список найденных вариантов
+     * для автозаполнения полей формы контрагента.
+     */
+    public function findParty(FindPartyRequest $request, DadataService $dadata): JsonResponse
+    {
+        try {
+            $suggestions = $dadata->findPartyByInn($request->validated('inn'));
+
+            return response()->json(['suggestions' => $suggestions]);
+        } catch (RuntimeException | ConnectionException $e) {
+            $error = $e instanceof RuntimeException
+                ? 'Сервис поиска компаний (DaData) не настроен. Обратитесь к администратору.'
+                : 'Сервис DaData недоступен. Проверьте подключение к интернету и попробуйте позже.';
+
+            Log::warning('DaData find-party failed', [
+                'inn' => $request->validated('inn'),
+                'reason' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'suggestions' => [],
+                'error' => $error,
+            ]);
+        }
     }
 
     /**

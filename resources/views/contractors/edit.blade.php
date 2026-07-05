@@ -96,4 +96,6 @@
             </form>
         </div>
     </div>
+
+    @include('partials.dadata-inn-search')
 @endsection

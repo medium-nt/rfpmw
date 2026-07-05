@@ -66,6 +66,9 @@ Route::middleware(['auth'])
         Route::delete('/{contractor}', [ContractorController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
         Route::get('/trashed', [ContractorController::class, 'trashed'])->name('trashed');
         Route::post('/{id}/restore', [ContractorController::class, 'restore'])->name('restore');
+        Route::get('/dadata/party', [ContractorController::class, 'findParty'])
+            ->middleware('throttle:30,1')
+            ->name('dadata.party');
         Route::get('/{contractor}', [ContractorController::class, 'show'])->name('show');
     });
 
