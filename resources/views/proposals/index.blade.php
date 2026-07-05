@@ -27,14 +27,18 @@
                             </td>
                             <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>
                             <td>
-                                <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}">{{ $proposal->employedPerson?->contractor?->name ?? '—' }}</a>
+                                @if ($proposal->employedPerson?->contractor)
+                                    <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}">{{ $proposal->employedPerson->contractor->name }}</a>
+                                @else
+                                    —
+                                @endif
                             </td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
                             <td>{{ $proposal->user?->name ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Коммерческие предложения не найдены.</td>
+                            <td colspan="5" class="text-center text-muted">Коммерческие предложения не найдены.</td>
                         </tr>
                     @endforelse
                 </tbody>
