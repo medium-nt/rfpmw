@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'dadata' => [
+        'token' => env('DADATA_API_KEY'),
+        'url' => env('DADATA_URL', 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party'),
+    ],
+
 ];
