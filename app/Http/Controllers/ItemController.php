@@ -17,9 +17,10 @@ class ItemController extends Controller
     public function index(): View
     {
         $items = Item::with('vendor')
-            ->when(request('q'), fn ($query) => $query->where('sku', 'like', '%'.request('q').'%')->orWhere('description', 'like', '%'.request('q').'%'))
+            ->when(request('q'), fn ($query) => $query->where('sku', 'like', '%'.request('q').'%'))
             ->orderByDesc('id')
-            ->paginate(20);
+            ->paginate(20)
+            ->appends(['q' => request('q')]);
 
         return view('items.index', compact('items'));
     }

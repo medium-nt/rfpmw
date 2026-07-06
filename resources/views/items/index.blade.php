@@ -9,9 +9,27 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <a href="{{ route('items.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Добавить артикул
-            </a>
+            <div class="d-flex align-items-center flex-wrap">
+                <a href="{{ route('items.create') }}" class="btn btn-primary btn-sm mb-2 mr-2">
+                    <i class="fas fa-plus"></i> Добавить артикул
+                </a>
+                <form action="{{ route('items.index') }}" method="get" class="form-inline mb-2 ml-auto">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" name="q" value="{{ request('q') }}"
+                               class="form-control" placeholder="Артикул...">
+                        @if (request('q'))
+                            <div class="input-group-append">
+                                <a href="{{ route('items.index') }}" class="btn btn-outline-secondary" title="Очистить">
+                                    <i class="fas fa-times text-danger"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="card-body table-responsive p-0">
