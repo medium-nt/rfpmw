@@ -366,6 +366,12 @@ return [
                     'icon' => 'fas fa-fw fa-barcode',
                     'can' => 'is-admin',
                 ],
+                [
+                    'text' => 'Удалённые контрагенты',
+                    'route' => 'contractors.trashed',
+                    'icon' => 'fas fa-fw fa-trash',
+                    'can' => 'is-admin',
+                ],
             ],
         ],
     ],

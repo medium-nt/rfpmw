@@ -8,12 +8,6 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <a href="{{ route('contractors.index') }}" class="btn btn-default btn-sm">
-                <i class="fas fa-arrow-left"></i> Назад к списку
-            </a>
-        </div>
-
         <div class="card-body table-responsive p-0">
             <table class="table table-bordered table-striped">
                 <thead>
