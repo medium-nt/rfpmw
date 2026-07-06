@@ -13,11 +13,6 @@
                 <a href="{{ route('contractors.create') }}" class="btn btn-primary btn-sm mb-2 mr-2">
                     <i class="fas fa-plus"></i> Добавить контрагента
                 </a>
-                @if (auth()->user()->isAdmin())
-                    <a href="{{ route('contractors.trashed') }}" class="btn btn-default btn-sm mb-2 mr-2">
-                        <i class="fas fa-trash"></i> Корзина
-                    </a>
-                @endif
                 <form action="{{ route('contractors.index') }}" method="get" class="form-inline mb-2 ml-auto">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
