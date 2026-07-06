@@ -34,7 +34,7 @@ class ContractorController extends Controller
                         ->orWhere('inn', 'like', '%'.$q.'%');
                 });
             })
-            ->with('user')
+            ->with('user', 'parent')
             ->orderBy('id')
             ->paginate(10)
             ->appends(['q' => request('q')]);
@@ -48,9 +48,10 @@ class ContractorController extends Controller
     public function create(): View
     {
         $managers = $this->managersForSelect();
+        $parents = $this->parentsForSelect();
         $types = Contractor::getTypes();
 
-        return view('contractors.create', compact('managers', 'types'));
+        return view('contractors.create', compact('managers', 'parents', 'types'));
     }
 
     /**
@@ -105,7 +106,7 @@ class ContractorController extends Controller
     {
         $this->authorizeAccess($contractor);
 
-        $contractor->load(['employedPeople.contactPerson', 'projects.responsiblePerson.contactPerson']);
+        $contractor->load(['employedPeople.contactPerson', 'projects.responsiblePerson.contactPerson', 'parent']);
 
         $availablePeople = ContactPerson::query()
             ->whereDoesntHave('employedPeople', fn ($q) => $q->where('contractor_id', $contractor->id)->whereNull('deleted_at'))
@@ -141,9 +142,10 @@ class ContractorController extends Controller
         $this->authorizeAccess($contractor);
 
         $managers = $this->managersForSelect();
+        $parents = $this->parentsForSelect($contractor->id);
         $types = Contractor::getTypes();
 
-        return view('contractors.edit', compact('contractor', 'managers', 'types'));
+        return view('contractors.edit', compact('contractor', 'managers', 'parents', 'types'));
     }
 
     /**
@@ -219,6 +221,22 @@ class ContractorController extends Controller
         return User::query()
             ->whereHas('role', fn ($q) => $q->where('slug', 'manager'))
             ->when(auth()->user()->isManager(), fn ($q) => $q->where('id', auth()->id()))
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+    }
+
+    /**
+     * Список контрагентов для селекта «Головной контрагент»: менеджер видит только своих,
+     * админ — всех. При редактировании текущий контрагент исключается (нельзя быть головным для себя).
+     *
+     * @return array<int, string>
+     */
+    protected function parentsForSelect(?int $exceptId = null): array
+    {
+        return Contractor::query()
+            ->when(auth()->user()->isManager(), fn ($q) => $q->where('user_id', auth()->id()))
+            ->when($exceptId, fn ($q) => $q->where('id', '!=', $exceptId))
             ->orderBy('name')
             ->pluck('name', 'id')
             ->all();

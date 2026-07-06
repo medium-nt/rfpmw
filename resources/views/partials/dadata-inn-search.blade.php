@@ -98,7 +98,7 @@
              */
             function applySuggestion(item) {
                 const nameEl = document.getElementById('name');
-                const addressEl = document.getElementById('address');
+                const addressEl = document.getElementById('legal_address');
                 const websiteEl = document.getElementById('website');
 
                 if (nameEl) nameEl.value = item.name || '';

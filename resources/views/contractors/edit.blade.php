@@ -57,21 +57,75 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="address">Адрес</label>
-                    <textarea id="address" name="address"
-                        class="form-control @error('address') is-invalid @enderror"
-                        rows="3">{{ old('address', $contractor->address) }}</textarea>
-                    @error('address')
+                    <label for="legal_address">Юридический адрес</label>
+                    <textarea id="legal_address" name="legal_address"
+                        class="form-control @error('legal_address') is-invalid @enderror"
+                        rows="3">{{ old('legal_address', $contractor->legal_address) }}</textarea>
+                    @error('legal_address')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="actual_address">Фактический адрес</label>
+                    <textarea id="actual_address" name="actual_address"
+                        class="form-control @error('actual_address') is-invalid @enderror"
+                        rows="3">{{ old('actual_address', $contractor->actual_address) }}</textarea>
+                    @error('actual_address')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="tel" id="phone" name="phone"
+                        class="form-control @error('phone') is-invalid @enderror"
+                        value="{{ old('phone', $contractor->phone) }}">
+                    @error('phone')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="region">Регион</label>
+                    <input type="text" id="region" name="region"
+                        class="form-control @error('region') is-invalid @enderror"
+                        value="{{ old('region', $contractor->region) }}">
+                    @error('region')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="industry">Отрасль</label>
+                    <input type="text" id="industry" name="industry"
+                        class="form-control @error('industry') is-invalid @enderror"
+                        value="{{ old('industry', $contractor->industry) }}">
+                    @error('industry')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="website">Сайт</label>
-                    <input type="url" id="website" name="website"
+                    <input type="text" id="website" name="website"
                         class="form-control @error('website') is-invalid @enderror"
                         value="{{ old('website', $contractor->website) }}">
                     @error('website')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="parent_id">Головной контрагент</label>
+                    <select id="parent_id" name="parent_id"
+                        class="form-control @error('parent_id') is-invalid @enderror">
+                        <option value="" @selected(blank(old('parent_id', $contractor->parent_id)))>— Нет (самостоятельный) —</option>
+                        @foreach ($parents as $id => $name)
+                            <option value="{{ $id }}" @selected(old('parent_id', $contractor->parent_id) == $id)>{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('parent_id')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

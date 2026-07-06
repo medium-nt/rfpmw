@@ -22,7 +22,12 @@ class ContractorFactory extends Factory
             'user_id' => User::factory(),
             'name' => fake()->company(),
             'inn' => fake()->unique()->numerify('############'),
-            'address' => fake()->optional()->address(),
+            'legal_address' => fake()->optional()->address(),
+            'actual_address' => fake()->optional()->address(),
+            'phone' => fake()->optional()->phoneNumber(),
+            'region' => fake()->optional()->city(),
+            'industry' => fake()->optional()->word(),
+            'parent_id' => null,
             'website' => fake()->optional()->url(),
             'type' => 'customer',
         ];

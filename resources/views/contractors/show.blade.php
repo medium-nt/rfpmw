@@ -25,8 +25,29 @@
                 <dt class="col-sm-3 col-md-2">Тип</dt>
                 <dd class="col-sm-9 col-md-10">{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Адрес</dt>
-                <dd class="col-sm-9 col-md-10">{{ $contractor->address ?? '—' }}</dd>
+                <dt class="col-sm-3 col-md-2">Юридический адрес</dt>
+                <dd class="col-sm-9 col-md-10">{{ $contractor->legal_address ?? '—' }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Фактический адрес</dt>
+                <dd class="col-sm-9 col-md-10">{{ $contractor->actual_address ?? '—' }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Телефон</dt>
+                <dd class="col-sm-9 col-md-10">{{ $contractor->phone ?? '—' }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Регион</dt>
+                <dd class="col-sm-9 col-md-10">{{ $contractor->region ?? '—' }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Отрасль</dt>
+                <dd class="col-sm-9 col-md-10">{{ $contractor->industry ?? '—' }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Головной контрагент</dt>
+                <dd class="col-sm-9 col-md-10">
+                    @if ($contractor->parent)
+                        <a href="{{ route('contractors.show', $contractor->parent) }}">{{ $contractor->parent->name }}</a>
+                    @else
+                        —
+                    @endif
+                </dd>
 
                 <dt class="col-sm-3 col-md-2">Сайт</dt>
                 <dd class="col-sm-9 col-md-10">
