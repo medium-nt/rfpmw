@@ -24,7 +24,12 @@
                             <th>Вендор</th>
                             <td>
                                 @if ($item->vendor)
-                                    <a href="{{ route('contractors.show', [$item->vendor, 'from' => '/' . request()->path()]) }}">{{ $item->vendor->name }}</a>
+                                    @if ($item->vendor->trashed())
+                                        <span class="text-muted">{{ $item->vendor->name }}</span>
+                                        <span class="badge badge-secondary">удалён</span>
+                                    @else
+                                        <a href="{{ route('contractors.show', [$item->vendor, 'from' => '/' . request()->path()]) }}">{{ $item->vendor->name }}</a>
+                                    @endif
                                 @else
                                     —
                                 @endif
