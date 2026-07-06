@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'name', 'inn', 'address', 'website', 'type'])]
+#[Fillable(['user_id', 'name', 'inn', 'legal_address', 'actual_address', 'phone', 'region', 'industry', 'parent_id', 'website', 'type'])]
 class Contractor extends Model
 {
     /** @use HasFactory<ContractorFactory> */
@@ -24,6 +24,16 @@ class Contractor extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Головной контрагент (самоссылающаяся связь parent_id).
+     *
+     * @return BelongsTo<Contractor, self>
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
     }
 
     /**

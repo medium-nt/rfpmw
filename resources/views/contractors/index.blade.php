@@ -37,18 +37,39 @@
                 <thead>
                     <tr>
                         <th>Название</th>
+                        <th class="d-none d-lg-table-cell">Головной контрагент</th>
+                        <th>Факт адрес</th>
+                        <th class="d-none d-lg-table-cell">Сайт</th>
                         <th>ИНН</th>
-                        <th class="d-none d-md-table-cell">Тип</th>
-                        <th class="d-none d-md-table-cell">Менеджер</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($contractors as $contractor)
                         <tr>
                             <td><a href="{{ route('contractors.show', $contractor) }}">{{ $contractor->name }}</a></td>
+                            <td class="d-none d-lg-table-cell">
+                                @if ($contractor->parent)
+                                    <a href="{{ route('contractors.show', $contractor->parent) }}">{{ $contractor->parent->name }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            <td>
+                                @if ($contractor->actual_address)
+                                    <span class="d-lg-none" title="{{ $contractor->actual_address }}">{{ \Illuminate\Support\Str::limit($contractor->actual_address, 20) }}</span>
+                                    <span class="d-none d-lg-inline" title="{{ $contractor->actual_address }}">{{ \Illuminate\Support\Str::limit($contractor->actual_address, 30) }}</span>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                @if ($contractor->website)
+                                    <a href="{{ $contractor->website }}" target="_blank" title="{{ $contractor->website }}">{{ \Illuminate\Support\Str::limit($contractor->website, 35) }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
                             <td>{{ $contractor->inn }}</td>
-                            <td class="d-none d-md-table-cell">{{ \App\Models\Contractor::getTypes()[$contractor->type] ?? $contractor->type }}</td>
-                            <td class="d-none d-md-table-cell">{{ $contractor->user?->name ?? '—' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
