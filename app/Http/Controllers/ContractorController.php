@@ -22,14 +22,22 @@ class ContractorController extends Controller
 {
     /**
      * Список контрагентов с data scoping: админ видит всех, менеджер — только своих.
+     * Поиск по названию (name) или ИНН (inn) через GET-параметр ?q=.
      */
     public function index(): View
     {
         $contractors = Contractor::query()
             ->when(auth()->user()->isManager(), fn ($q) => $q->where('user_id', auth()->id()))
+            ->when(request('q'), function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('name', 'like', '%'.$q.'%')
+                        ->orWhere('inn', 'like', '%'.$q.'%');
+                });
+            })
             ->with('user')
             ->orderBy('id')
-            ->paginate(10);
+            ->paginate(2)
+            ->appends(['q' => request('q')]);
 
         return view('contractors.index', compact('contractors'));
     }
@@ -55,7 +63,7 @@ class ContractorController extends Controller
             $suggestions = $dadata->findPartyByInn($request->validated('inn'));
 
             return response()->json(['suggestions' => $suggestions]);
-        } catch (RuntimeException | ConnectionException $e) {
+        } catch (RuntimeException|ConnectionException $e) {
             $error = $e instanceof RuntimeException
                 ? 'Сервис поиска компаний (DaData) не настроен. Обратитесь к администратору.'
                 : 'Сервис DaData недоступен. Проверьте подключение к интернету и попробуйте позже.';

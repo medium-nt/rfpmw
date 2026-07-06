@@ -22,8 +22,10 @@ class ProjectController extends Controller
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
+            ->when(request('q'), fn ($query, $q) => $query->where('name', 'like', '%'.$q.'%'))
             ->orderBy('id')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(['q' => request('q')]);
 
         return view('projects.index', compact('projects'));
     }

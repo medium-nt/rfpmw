@@ -25,12 +25,20 @@ class ContactPersonController extends Controller
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPeople', fn ($qq) => $qq->whereRelation('contractor', 'user_id', auth()->id()));
             })
+            ->when(request('q'), function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('fio', 'like', '%'.$q.'%')
+                        ->orWhere('phone', 'like', '%'.$q.'%')
+                        ->orWhere('email', 'like', '%'.$q.'%');
+                });
+            })
             ->with(['employedPeople' => function ($q): void {
                 $q->with('contractor')
                     ->when(auth()->user()->isManager(), fn ($qq) => $qq->whereHas('contractor', fn ($c) => $c->where('user_id', auth()->id())));
             }])
             ->orderBy('id')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(['q' => request('q')]);
 
         return view('contact-people.index', compact('people'));
     }

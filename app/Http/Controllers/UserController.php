@@ -16,7 +16,16 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $users = User::with('role')->orderBy('id')->get();
+        $users = User::query()
+            ->when(request('q'), function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('name', 'like', '%'.$q.'%')
+                        ->orWhere('username', 'like', '%'.$q.'%');
+                });
+            })
+            ->with('role')
+            ->orderBy('id')
+            ->get();
 
         return view('users.index', compact('users'));
     }

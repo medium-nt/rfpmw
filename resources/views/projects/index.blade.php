@@ -8,6 +8,26 @@
 
 @section('content')
     <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-end">
+                <form action="{{ route('projects.index') }}" method="get" class="form-inline mb-2">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" name="q" value="{{ request('q') }}"
+                               class="form-control" placeholder="Название...">
+                        @if (request('q'))
+                            <div class="input-group-append">
+                                <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary" title="Очистить">
+                                    <i class="fas fa-times text-danger"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="card-body table-responsive p-0">
             <table class="table table-bordered table-striped">
                 <thead>
