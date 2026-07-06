@@ -19,6 +19,7 @@ class ProjectController extends Controller
     {
         $projects = Project::query()
             ->with(['contractor.user', 'responsiblePerson.contactPerson'])
+            ->whereHas('contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
@@ -71,6 +72,8 @@ class ProjectController extends Controller
     public function show(Project $project): View
     {
         $this->authorizeProjectAccess($project);
+
+        abort_if($project->contractor->trashed(), 404, 'Контрагент удалён.');
 
         $project->load(['contractor.user', 'responsiblePerson.contactPerson', 'events.employedPerson.contactPerson', 'events.user', 'projectItems.item.vendor']);
 

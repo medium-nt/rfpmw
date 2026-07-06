@@ -21,6 +21,7 @@ class EventController extends Controller
     {
         $events = Event::query()
             ->with(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'project', 'request', 'proposal'])
+            ->whereHas('employedPerson.contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPerson.contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
@@ -79,6 +80,8 @@ class EventController extends Controller
     public function show(Event $event): View
     {
         $this->authorizeEventAccess($event);
+
+        abort_if($event->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
         $event->load(['user', 'employedPerson.contactPerson', 'employedPerson.contractor', 'project', 'request', 'proposal']);
 

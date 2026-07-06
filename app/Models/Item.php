@@ -18,13 +18,13 @@ class Item extends Model
     use HasFactory, SoftDeletes;
 
     /**
-     * Вендор этого артикула.
+     * Вендор этого артикула (с мягко-удалёнными — имя сохраняется в позициях после удаления контрагента).
      *
      * @return BelongsTo<Contractor, Item>
      */
     public function vendor(): BelongsTo
     {
-        return $this->belongsTo(Contractor::class);
+        return $this->belongsTo(Contractor::class)->withTrashed();
     }
 
     /**
@@ -58,12 +58,18 @@ class Item extends Model
     }
 
     /**
-     * Список артикулов для селекта (с вендором, по sku) — без soft-deleted.
+     * Список артикулов для селекта (по sku): без soft-deleted артикулов и без артикулов
+     * удалённых вендоров. Артикулы без вендора (vendor_id null) остаются.
      *
      * @return Collection<int, Item>
      */
     public static function forSelect(): Collection
     {
-        return static::with('vendor')->orderBy('sku')->get();
+        return static::with('vendor')
+            ->where(fn ($q) => $q
+                ->whereNull('vendor_id')
+                ->orWhereHas('vendor', fn ($qq) => $qq->whereNull('contractors.deleted_at')))
+            ->orderBy('sku')
+            ->get();
     }
 }

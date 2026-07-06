@@ -23,7 +23,9 @@ class ContactPersonController extends Controller
     {
         $people = ContactPerson::query()
             ->when(auth()->user()->isManager(), function ($q): void {
-                $q->whereHas('employedPeople', fn ($qq) => $qq->whereRelation('contractor', 'user_id', auth()->id()));
+                $q->whereHas('employedPeople', fn ($qq) => $qq->whereHas('contractor', fn ($c) => $c
+                    ->where('user_id', auth()->id())
+                    ->whereNull('contractors.deleted_at')));
             })
             ->when(request('q'), function ($query, $q) {
                 $query->where(function ($sub) use ($q) {
@@ -34,6 +36,7 @@ class ContactPersonController extends Controller
             })
             ->with(['employedPeople' => function ($q): void {
                 $q->with('contractor')
+                    ->whereHas('contractor', fn ($c) => $c->whereNull('contractors.deleted_at'))
                     ->when(auth()->user()->isManager(), fn ($qq) => $qq->whereHas('contractor', fn ($c) => $c->where('user_id', auth()->id())));
             }])
             ->orderBy('id')
@@ -53,6 +56,7 @@ class ContactPersonController extends Controller
         $this->authorizeContactPersonAccess($person);
 
         $employments = $person->employedPeople()
+            ->whereHas('contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
             ->when(auth()->user()->isManager(), fn ($q) => $q->whereHas('contractor', fn ($qq) => $qq->where('user_id', auth()->id())))
             ->with('contractor.user')
             ->get();

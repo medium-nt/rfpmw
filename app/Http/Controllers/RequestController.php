@@ -19,6 +19,7 @@ class RequestController extends Controller
     {
         $requests = Request::query()
             ->with(['employedPerson.contactPerson', 'employedPerson.contractor', 'user'])
+            ->whereHas('employedPerson.contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPerson.contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
@@ -70,6 +71,8 @@ class RequestController extends Controller
     public function show(Request $request): View
     {
         $this->authorizeRequestAccess($request);
+
+        abort_if($request->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
         $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'requestItems.item.vendor']);
 
