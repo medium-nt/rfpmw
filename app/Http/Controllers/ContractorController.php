@@ -36,7 +36,7 @@ class ContractorController extends Controller
             })
             ->with('user')
             ->orderBy('id')
-            ->paginate(2)
+            ->paginate(10)
             ->appends(['q' => request('q')]);
 
         return view('contractors.index', compact('contractors'));

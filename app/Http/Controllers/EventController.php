@@ -24,8 +24,11 @@ class EventController extends Controller
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPerson.contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
+            ->when(request('from'), fn ($q) => $q->where('date', '>=', request('from')))
+            ->when(request('to'), fn ($q) => $q->where('date', '<=', request('to')))
             ->orderBy('id')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(['from' => request('from'), 'to' => request('to')]);
 
         return view('events.index', compact('events'));
     }

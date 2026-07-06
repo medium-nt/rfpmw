@@ -8,6 +8,20 @@
 
 @section('content')
     <div class="card">
+        <div class="card-header">
+            <form method="get" class="form-inline">
+                <label class="mr-2 mb-0">Дата от:</label>
+                <input type="date" name="from" value="{{ request('from') }}"
+                       max="{{ request('to') }}"
+                       onchange="updatePageWithQueryParam(this)"
+                       class="form-control form-control-sm mr-3">
+                <label class="mr-2 mb-0">до:</label>
+                <input type="date" name="to" value="{{ request('to') }}"
+                       min="{{ request('from') }}"
+                       onchange="updatePageWithQueryParam(this)"
+                       class="form-control form-control-sm">
+            </form>
+        </div>
         <div class="card-body table-responsive p-0">
             <table class="table table-bordered table-striped">
                 <thead>
@@ -59,3 +73,7 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="{{ asset('js/page-query-param.js') }}"></script>
+@endpush
