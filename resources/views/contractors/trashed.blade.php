@@ -24,7 +24,7 @@
                     @forelse ($contractors as $contractor)
                         <tr>
                             <td>{{ $contractor->id }}</td>
-                            <td>{{ $contractor->name }}</td>
+                            <td title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</td>
                             <td>{{ $contractor->inn }}</td>
                             <td>{{ $contractor->user?->name ?? '—' }}</td>
                             <td>{{ $contractor->deleted_at?->format('d.m.Y H:i') }}</td>

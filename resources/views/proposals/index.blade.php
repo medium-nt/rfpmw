@@ -39,16 +39,16 @@
                             <td>
                                 <a href="{{ route('proposals.show', $proposal) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td title="{{ $proposal->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
                                 @if ($proposal->employedPerson?->contractor)
-                                    <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}">{{ $proposal->employedPerson->contractor->name }}</a>
+                                    <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}" title="{{ $proposal->employedPerson->contractor->name }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson->contractor->name, 20) }}</a>
                                 @else
                                     —
                                 @endif
                             </td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
-                            <td>{{ $proposal->user?->name ?? '—' }}</td>
+                            <td title="{{ $proposal->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->user?->name ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>

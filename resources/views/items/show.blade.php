@@ -11,6 +11,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>
                             <th width="30%">ID</th>
@@ -48,6 +49,7 @@
                             <td>{{ $item->updated_at->format('d.m.Y H:i') }}</td>
                         </tr>
                     </table>
+                    </div>
                 </div>
             </div>
 

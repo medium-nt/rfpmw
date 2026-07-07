@@ -43,14 +43,14 @@
                     @forelse ($projects as $project)
                         <tr>
                             <td>
-                                <a href="{{ route('projects.show', $project) }}">{{ $project->name }}</a>
+                                <a href="{{ route('projects.show', $project) }}" title="{{ $project->name }}">{{ \Illuminate\Support\Str::limit($project->name, 20) }}</a>
                             </td>
                             <td>
-                                <a href="{{ route('contractors.show', $project->contractor) }}">{{ $project->contractor->name }}</a>
+                                <a href="{{ route('contractors.show', $project->contractor) }}" title="{{ $project->contractor->name }}">{{ \Illuminate\Support\Str::limit($project->contractor->name, 20) }}</a>
                             </td>
                             <td>{{ $project->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status ?? '—' }}</td>
-                            <td>{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td title="{{ $project->responsiblePerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($project->responsiblePerson?->contactPerson?->fio ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>

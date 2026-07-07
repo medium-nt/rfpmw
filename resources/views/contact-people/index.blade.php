@@ -46,7 +46,7 @@
                             </td>
                             <td>{{ $person->phone ?? '—' }}</td>
                             <td>{{ $person->email ?? '—' }}</td>
-                            <td>{{ $person->employedPeople->pluck('contractor.name')->filter()->join(', ') ?: '—' }}</td>
+                            <td title="{{ $person->employedPeople->pluck('contractor.name')->filter()->join(', ') }}">{{ \Illuminate\Support\Str::limit($person->employedPeople->pluck('contractor.name')->filter()->join(', ') ?: '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>

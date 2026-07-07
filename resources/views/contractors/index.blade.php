@@ -46,7 +46,7 @@
                 <tbody>
                     @foreach ($contractors as $contractor)
                         <tr>
-                            <td><a href="{{ route('contractors.show', $contractor) }}">{{ $contractor->name }}</a></td>
+                            <td><a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a></td>
                             <td class="d-none d-lg-table-cell">
                                 @if ($contractor->parent)
                                     <a href="{{ route('contractors.show', $contractor->parent) }}">{{ $contractor->parent->name }}</a>

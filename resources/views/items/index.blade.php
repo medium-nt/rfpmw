@@ -45,8 +45,8 @@
                     @foreach ($items as $item)
                         <tr>
                             <td><a href="{{ route('items.show', $item) }}">{{ $item->sku }}</a></td>
-                            <td>{{ $item->vendor?->name ?? '—' }}</td>
-                            <td>{{ Str::limit($item->description, 100) ?? '—' }}</td>
+                            <td title="{{ $item->vendor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($item->vendor?->name ?? '—', 20) }}</td>
+                            <td title="{{ $item->description ?? '' }}">{{ \Illuminate\Support\Str::limit($item->description ?? '—', 20) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
