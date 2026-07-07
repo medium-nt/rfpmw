@@ -23,7 +23,12 @@ class ProjectController extends Controller
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
-            ->when(request('q'), fn ($query, $q) => $query->where('name', 'like', '%'.$q.'%'))
+            ->when(request('q'), function ($query, $q): void {
+                $query->where(function ($qq) use ($q): void {
+                    $qq->where('name', 'like', '%'.$q.'%')
+                        ->orWhereHas('contractor', fn ($c) => $c->where('contractors.name', 'like', '%'.$q.'%'));
+                });
+            })
             ->orderBy('id')
             ->paginate(10)
             ->appends(['q' => request('q')]);

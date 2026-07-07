@@ -31,7 +31,9 @@ class ContractorController extends Controller
             ->when(request('q'), function ($query, $q) {
                 $query->where(function ($sub) use ($q) {
                     $sub->where('name', 'like', '%'.$q.'%')
-                        ->orWhere('inn', 'like', '%'.$q.'%');
+                        ->orWhere('inn', 'like', '%'.$q.'%')
+                        ->orWhere('legal_address', 'like', '%'.$q.'%')
+                        ->orWhere('actual_address', 'like', '%'.$q.'%');
                 });
             })
             ->with('user', 'parent')
