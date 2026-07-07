@@ -15,12 +15,13 @@
             </a>
         </div>
         <div class="card-body">
+            <div class="dl-horizontal-scroll">
             <dl class="row mb-0">
-                <dt class="col-sm-3 col-md-2">Дата</dt>
-                <dd class="col-sm-9 col-md-10">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Дата</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Статус</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Статус</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     @if ($proposal->status)
                         <span class="badge badge-info">{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status }}</span>
                     @else
@@ -28,8 +29,8 @@
                     @endif
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Сотрудник</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Сотрудник</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     @if ($proposal->employedPerson)
                         {{ $proposal->employedPerson->contactPerson?->fio ?? '—' }}
                         @if ($proposal->employedPerson->position)
@@ -40,17 +41,18 @@
                     @endif
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Контрагент</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Контрагент</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     <a href="{{ route('contractors.show', [$proposal->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $proposal->employedPerson->contractor?->name }}</a>
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Менеджер</dt>
-                <dd class="col-sm-9 col-md-10">{{ $proposal->user?->name ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Менеджер</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $proposal->user?->name ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Сумма, USD</dt>
-                <dd class="col-sm-9 col-md-10">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Сумма, USD</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</dd>
             </dl>
+            </div>
         </div>
     </div>
 

@@ -39,12 +39,12 @@
                             <td>
                                 <a href="{{ route('requests.show', $request) }}">{{ $request->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $request->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td title="{{ $request->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
-                                <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}">{{ $request->employedPerson?->contractor?->name ?? '—' }}</a>
+                                <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}" title="{{ $request->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contractor?->name ?? '—', 20) }}</a>
                             </td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
-                            <td>{{ $request->user?->name ?? '—' }}</td>
+                            <td title="{{ $request->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->user?->name ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>

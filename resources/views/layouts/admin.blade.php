@@ -26,6 +26,13 @@
             border-color: #80bdff;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
         }
+
+        /* Горизонтальный скролл карточки dl/dt/dd на show-страницах:
+           длинные значения (адреса, описания) держатся одной строкой,
+           при переполнении срабатывает overflow-x:auto на родителе. */
+        .dl-horizontal-scroll { overflow-x: auto; }
+        .dl-horizontal-scroll > .row { margin-left: 0; margin-right: 0; }
+        .dl-horizontal-scroll dd { white-space: nowrap; }
     </style>
 @endpush
 

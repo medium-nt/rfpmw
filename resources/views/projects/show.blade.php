@@ -15,20 +15,21 @@
             </a>
         </div>
         <div class="card-body">
+            <div class="dl-horizontal-scroll">
             <dl class="row mb-0">
-                <dt class="col-sm-3 col-md-2">Название</dt>
-                <dd class="col-sm-9 col-md-10">{{ $project->name }}</dd>
+                <dt class="col-6 col-sm-3 col-md-2">Название</dt>
+                <dd class="col-6 col-sm-9 col-md-10">{{ $project->name }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Контрагент</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-6 col-sm-3 col-md-2">Контрагент</dt>
+                <dd class="col-6 col-sm-9 col-md-10">
                     <a href="{{ route('contractors.show', [$project->contractor, 'from' => '/' . request()->path()]) }}">{{ $project->contractor->name }}</a>
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Дата выхода в серию</dt>
-                <dd class="col-sm-9 col-md-10">{{ $project->date?->format('d.m.Y') ?? '—' }}</dd>
+                <dt class="col-6 col-sm-3 col-md-2">Выход в серию</dt>
+                <dd class="col-6 col-sm-9 col-md-10">{{ $project->date?->format('d.m.Y') ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Статус</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-6 col-sm-3 col-md-2">Статус</dt>
+                <dd class="col-6 col-sm-9 col-md-10">
                     @if ($project->status)
                         <span class="badge badge-info">{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status }}</span>
                     @else
@@ -36,15 +37,16 @@
                     @endif
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Ответственный</dt>
-                <dd class="col-sm-9 col-md-10">{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</dd>
+                <dt class="col-6 col-sm-3 col-md-2">Ответственный</dt>
+                <dd class="col-6 col-sm-9 col-md-10">{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Сумма, USD</dt>
-                <dd class="col-sm-9 col-md-10">{{ number_format((float) $project->usd_value, 2, '.', ' ') }}</dd>
+                <dt class="col-6 col-sm-3 col-md-2">Сумма, USD</dt>
+                <dd class="col-6 col-sm-9 col-md-10">{{ number_format((float) $project->usd_value, 2, '.', ' ') }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Описание</dt>
-                <dd class="col-sm-9 col-md-10">{{ $project->description ?? '—' }}</dd>
+                <dt class="col-6 col-sm-3 col-md-2">Описание</dt>
+                <dd class="col-6 col-sm-9 col-md-10">{{ $project->description ?? '—' }}</dd>
             </dl>
+            </div>
         </div>
     </div>
 

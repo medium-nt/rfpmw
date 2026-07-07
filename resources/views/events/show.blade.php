@@ -15,17 +15,18 @@
             </a>
         </div>
         <div class="card-body">
+            <div class="dl-horizontal-scroll">
             <dl class="row mb-0">
-                <dt class="col-sm-3 col-md-2">Тип</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Тип</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     <span class="badge badge-info">{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</span>
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Дата</dt>
-                <dd class="col-sm-9 col-md-10">{{ $event->date?->format('d.m.Y') ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Дата</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $event->date?->format('d.m.Y') ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Сотрудник</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Сотрудник</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     @if ($event->employedPerson)
                         {{ $event->employedPerson->contactPerson?->fio ?? '—' }}
                         @if ($event->employedPerson->position)
@@ -36,22 +37,22 @@
                     @endif
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Контрагент</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Контрагент</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     <a href="{{ route('contractors.show', [$event->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $event->employedPerson->contractor?->name }}</a>
                 </dd>
 
-                <dt class="col-sm-3 col-md-2">Тема</dt>
-                <dd class="col-sm-9 col-md-10">{{ $event->subject ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Тема</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $event->subject ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Описание</dt>
-                <dd class="col-sm-9 col-md-10">{{ $event->description ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Описание</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $event->description ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Менеджер</dt>
-                <dd class="col-sm-9 col-md-10">{{ $event->user?->name ?? '—' }}</dd>
+                <dt class="col-5 col-sm-3 col-md-2">Менеджер</dt>
+                <dd class="col-7 col-sm-9 col-md-10">{{ $event->user?->name ?? '—' }}</dd>
 
-                <dt class="col-sm-3 col-md-2">Привязка</dt>
-                <dd class="col-sm-9 col-md-10">
+                <dt class="col-5 col-sm-3 col-md-2">Привязка</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
                     @if ($event->project)
                         <div><i class="fas fa-folder"></i> Проект: <a href="{{ route('projects.show', [$event->project, 'from' => '/' . request()->path()]) }}">{{ $event->project->name }}</a></div>
                     @endif
@@ -66,6 +67,7 @@
                     @endunless
                 </dd>
             </dl>
+            </div>
         </div>
     </div>
 

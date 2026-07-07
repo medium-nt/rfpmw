@@ -45,7 +45,7 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-                            <td>{{ $user->name }}</td>
+                            <td title="{{ $user->name }}">{{ \Illuminate\Support\Str::limit($user->name, 20) }}</td>
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->role->title }}</td>
                             <td class="text-right">

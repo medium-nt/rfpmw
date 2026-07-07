@@ -42,11 +42,11 @@
                                 <a href="{{ route('events.show', $event) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
                             <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
-                            <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td title="{{ $event->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
-                                <a href="{{ route('contractors.show', $event->employedPerson->contractor) }}">{{ $event->employedPerson?->contractor?->name ?? '—' }}</a>
+                                <a href="{{ route('contractors.show', $event->employedPerson->contractor) }}" title="{{ $event->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contractor?->name ?? '—', 20) }}</a>
                             </td>
-                            <td>{{ $event->subject ?? '—' }}</td>
+                            <td title="{{ $event->subject ?? '' }}">{{ \Illuminate\Support\Str::limit($event->subject ?? '—', 20) }}</td>
                             <td>
                                 @if ($event->project)
                                     <a href="{{ route('projects.show', $event->project) }}"><i class="fas fa-folder"></i> {{ $event->project->name }}</a>
@@ -58,7 +58,7 @@
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td>{{ $event->user?->name ?? '—' }}</td>
+                            <td title="{{ $event->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($event->user?->name ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>
