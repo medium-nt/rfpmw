@@ -25,7 +25,7 @@ class UserController extends Controller
             })
             ->with('role')
             ->orderBy('id')
-            ->get();
+            ->paginate(3);
 
         return view('users.index', compact('users'));
     }
