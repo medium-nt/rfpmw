@@ -16,7 +16,7 @@
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
                         <input type="text" name="q" value="{{ request('q') }}"
-                               class="form-control" placeholder="Название...">
+                               class="form-control" placeholder="Название или заказчик...">
                         @if (request('q'))
                             <div class="input-group-append">
                                 <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary" title="Очистить">
