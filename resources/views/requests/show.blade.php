@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Запрос №' . $request->id)
+@section('title', 'Запрос ' . ($request->date?->format('d.m.Y') ?? '—'))
 
 @section('content_header')
-    <h1>Запрос №{{ $request->id }}</h1>
+    <h1>Запрос {{ $request->date?->format('d.m.Y') ?? '—' }}</h1>
 @endsection
 
 @section('content')
