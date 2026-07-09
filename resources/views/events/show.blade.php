@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Событие №' . $event->id)
+@section('title', (\App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type) . ' ' . ($event->date?->format('d.m.Y') ?? '—'))
 
 @section('content_header')
-    <h1>Событие №{{ $event->id }}</h1>
+    <h1>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }} {{ $event->date?->format('d.m.Y') ?? '—' }}</h1>
 @endsection
 
 @section('content')

@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'КП №' . $proposal->id)
+@section('title', 'КП ' . ($proposal->date?->format('d.m.Y') ?? '—'))
 
 @section('content_header')
-    <h1>КП №{{ $proposal->id }}</h1>
+    <h1>КП {{ $proposal->date?->format('d.m.Y') ?? '—' }}</h1>
 @endsection
 
 @section('content')
