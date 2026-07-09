@@ -32,10 +32,14 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ФИО</th>
+                        <th>
+                            <x-sort-link field="fio" title="ФИО" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Телефон</th>
                         <th>Email</th>
-                        <th>Контрагенты</th>
+                        <th>
+                            <x-sort-link field="contractor" title="Контрагенты" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

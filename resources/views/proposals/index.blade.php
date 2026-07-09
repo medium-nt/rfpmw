@@ -26,9 +26,13 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Дата</th>
+                        <th>
+                            <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Сотрудник</th>
-                        <th>Контрагент</th>
+                        <th>
+                            <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Статус</th>
                         <th>Менеджер</th>
                     </tr>

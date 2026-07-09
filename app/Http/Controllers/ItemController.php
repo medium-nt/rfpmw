@@ -13,16 +13,36 @@ class ItemController extends Controller
 {
     /**
      * Отображает список артикулов.
+     * Сортировка по клику на заголовок: ?sort=sku|vendor&direction=asc|desc.
+     * По умолчанию — по артикулу (sku) по алфавиту (asc).
      */
     public function index(): View
     {
+        $allowedSortFields = ['sku', 'vendor'];
+        $sortField = request('sort', 'sku');
+        $sortDirection = request('direction', 'asc');
+
+        if (! in_array($sortField, $allowedSortFields)) {
+            $sortField = 'sku';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
         $items = Item::with('vendor')
             ->when(request('q'), fn ($query) => $query->where('sku', 'like', '%'.request('q').'%'))
-            ->orderByDesc('id')
+            ->when($sortField === 'vendor', function ($query) use ($sortDirection): void {
+                // Сортировка по имени вендора (прямая связь vendor_id, может быть NULL — leftJoin)
+                $query->leftJoin('contractors as vendors', 'items.vendor_id', '=', 'vendors.id')
+                    ->select('items.*')
+                    ->orderBy('vendors.name', $sortDirection);
+            }, function ($query) use ($sortDirection): void {
+                $query->orderBy('sku', $sortDirection);
+            })
             ->paginate(20)
-            ->appends(['q' => request('q')]);
+            ->appends(['q' => request('q'), 'sort' => $sortField, 'direction' => $sortDirection]);
 
-        return view('items.index', compact('items'));
+        return view('items.index', compact('items', 'sortField', 'sortDirection'));
     }
 
     /**

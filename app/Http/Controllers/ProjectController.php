@@ -14,9 +14,22 @@ class ProjectController extends Controller
 {
     /**
      * Список проектов с data scoping: админ видит все, менеджер — только проекты своих контрагентов.
+     * Сортировка по клику на заголовок: ?sort=name|contractor&direction=asc|desc.
+     * По умолчанию — по названию контрагента (asc).
      */
     public function index(): View
     {
+        $allowedSortFields = ['name', 'contractor'];
+        $sortField = request('sort', 'contractor');
+        $sortDirection = request('direction', 'asc');
+
+        if (! in_array($sortField, $allowedSortFields)) {
+            $sortField = 'contractor';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
         $projects = Project::query()
             ->with(['contractor.user', 'responsiblePerson.contactPerson'])
             ->whereHas('contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
@@ -25,15 +38,24 @@ class ProjectController extends Controller
             })
             ->when(request('q'), function ($query, $q): void {
                 $query->where(function ($qq) use ($q): void {
-                    $qq->where('name', 'like', '%'.$q.'%')
+                    $qq->where('projects.name', 'like', '%'.$q.'%')
                         ->orWhereHas('contractor', fn ($c) => $c->where('contractors.name', 'like', '%'.$q.'%'));
                 });
             })
-            ->orderBy('id')
+            ->when(request('from'), fn ($q) => $q->where('date', '>=', request('from')))
+            ->when(request('to'), fn ($q) => $q->where('date', '<=', request('to')))
+            ->when($sortField === 'contractor', function ($query) use ($sortDirection): void {
+                // Сортировка по имени контрагента (прямая связь contractor_id, дублей нет)
+                $query->leftJoin('contractors', 'projects.contractor_id', '=', 'contractors.id')
+                    ->select('projects.*')
+                    ->orderBy('contractors.name', $sortDirection);
+            }, function ($query) use ($sortDirection): void {
+                $query->orderBy('name', $sortDirection);
+            })
             ->paginate(10)
-            ->appends(['q' => request('q')]);
+            ->appends(['from' => request('from'), 'to' => request('to'), 'q' => request('q'), 'sort' => $sortField, 'direction' => $sortDirection]);
 
-        return view('projects.index', compact('projects'));
+        return view('projects.index', compact('projects', 'sortField', 'sortDirection'));
     }
 
     /**

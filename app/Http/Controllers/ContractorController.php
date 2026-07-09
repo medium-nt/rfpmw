@@ -17,16 +17,36 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use RuntimeException;
 
 class ContractorController extends Controller
 {
     /**
      * Список контрагентов с data scoping: админ видит всех, менеджер — только своих.
      * Поиск по названию (name) или ИНН (inn) через GET-параметр ?q=.
+     * Сортировка по клику на заголовок: ?sort=name|inn&direction=asc|desc.
      */
     public function index(): View
     {
-        $contractors = Contractor::query()
+        // Белый список полей для сортировки (безопасность)
+        $allowedSortFields = ['name', 'inn'];
+
+        // Получаем параметры сортировки с defaults
+        $sortField = request('sort', 'name');
+        $sortDirection = request('direction', 'asc');
+
+        // Валидация поля
+        if (! in_array($sortField, $allowedSortFields)) {
+            $sortField = 'name';
+        }
+
+        // Валидация направления
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
+        // Базовый запрос с scoping и поиском
+        $query = Contractor::query()
             ->when(auth()->user()->isManager(), fn ($q) => $q->where('user_id', auth()->id()))
             ->when(request('q'), function ($query, $q) {
                 $query->where(function ($sub) use ($q) {
@@ -36,12 +56,17 @@ class ContractorController extends Controller
                         ->orWhere('actual_address', 'like', '%'.$q.'%');
                 });
             })
-            ->with('user', 'parent')
-            ->orderBy('id')
-            ->paginate(10)
-            ->appends(['q' => request('q')]);
+            ->orderBy($sortField, $sortDirection);
 
-        return view('contractors.index', compact('contractors'));
+        $contractors = $query->with('user', 'parent')
+            ->paginate(10)
+            ->appends([
+                'q' => request('q'),
+                'sort' => $sortField,
+                'direction' => $sortDirection,
+            ]);
+
+        return view('contractors.index', compact('contractors', 'sortField', 'sortDirection'));
     }
 
     /**
@@ -103,12 +128,26 @@ class ContractorController extends Controller
 
     /**
      * Карточка контрагента с данными, контактными лицами и действиями.
+     *
+     * Блоки связанных сущностей отсортированы по умолчанию: события/запросы/КП/проекты —
+     * по дате (desc, свежие сверху), контактные лица — по ФИО (алфавит, asc).
      */
     public function show(Contractor $contractor): View
     {
         $this->authorizeAccess($contractor);
 
-        $contractor->load(['employedPeople.contactPerson', 'projects.responsiblePerson.contactPerson', 'parent']);
+        $contractor->load([
+            'employedPeople.contactPerson',
+            'projects' => fn ($q) => $q->orderBy('date', 'desc')->with('responsiblePerson.contactPerson'),
+            'parent',
+        ]);
+
+        // Сортировка контактных лиц по ФИО (алфавит) — коллекцией, т.к. fio в связанной таблице
+        // и сортировка через join потребовала бы leftJoin (чтобы не терять сотрудников с удалённым профилем).
+        $contractor->setRelation(
+            'employedPeople',
+            $contractor->employedPeople->sortBy(fn ($ep) => mb_strtolower($ep->contactPerson?->fio ?? ''))->values()
+        );
 
         $availablePeople = ContactPerson::query()
             ->whereDoesntHave('employedPeople', fn ($q) => $q->where('contractor_id', $contractor->id)->whereNull('deleted_at'))
@@ -118,19 +157,19 @@ class ContractorController extends Controller
         $requests = Request::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
-            ->orderByDesc('id')
+            ->orderByDesc('date')
             ->get();
 
         $proposals = Proposal::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
-            ->orderByDesc('id')
+            ->orderByDesc('date')
             ->get();
 
         $events = Event::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
-            ->orderByDesc('id')
+            ->orderByDesc('date')
             ->get();
 
         return view('contractors.show', compact('contractor', 'availablePeople', 'requests', 'proposals', 'events'));

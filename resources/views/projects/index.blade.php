@@ -9,8 +9,20 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-end">
-                <form action="{{ route('projects.index') }}" method="get" class="form-inline mb-2">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <form method="get" class="form-inline mb-2 mb-md-0">
+                    <label class="mr-2 mb-0">Дата от:</label>
+                    <input type="date" name="from" value="{{ request('from') }}"
+                           max="{{ request('to') }}"
+                           onchange="updatePageWithQueryParam(this)"
+                           class="form-control form-control-sm mr-3">
+                    <label class="mr-2 mb-0">до:</label>
+                    <input type="date" name="to" value="{{ request('to') }}"
+                           min="{{ request('from') }}"
+                           onchange="updatePageWithQueryParam(this)"
+                           class="form-control form-control-sm">
+                </form>
+                <form action="{{ route('projects.index') }}" method="get" class="form-inline mb-2 mb-md-0">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -32,8 +44,12 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Название</th>
-                        <th>Контрагент</th>
+                        <th>
+                            <x-sort-link field="name" title="Название" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
+                        <th>
+                            <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Дата выхода в серию</th>
                         <th>Статус</th>
                         <th>Ответственный</th>
@@ -65,3 +81,7 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="{{ asset('js/page-query-param.js') }}"></script>
+@endpush

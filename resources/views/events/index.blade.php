@@ -20,16 +20,28 @@
                        min="{{ request('from') }}"
                        onchange="updatePageWithQueryParam(this)"
                        class="form-control form-control-sm">
+                <label class="ml-3 mr-2 mb-0">Поиск:</label>
+                <input type="text" name="q" value="{{ request('q') }}"
+                       placeholder="Тема или описание..."
+                       onchange="updatePageWithQueryParam(this)"
+                       onkeydown="if(event.key==='Enter'){event.preventDefault();updatePageWithQueryParam(this);}"
+                       class="form-control form-control-sm">
             </form>
         </div>
         <div class="card-body table-responsive p-0">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Дата</th>
+                        <th>
+                            <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Тип</th>
-                        <th>Сотрудник</th>
-                        <th>Контрагент</th>
+                        <th>
+                            <x-sort-link field="employee" title="Сотрудник" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
+                        <th>
+                            <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Тема</th>
                         <th>Привязка</th>
                         <th>Менеджер</th>
