@@ -16,9 +16,22 @@ class EventController extends Controller
 {
     /**
      * Список событий с data scoping: админ видит все, менеджер — только события своих контрагентов.
+     * Сортировка по клику на заголовок: ?sort=date|contractor|employee&direction=asc|desc.
+     * По умолчанию — по дате (desc), вверху более свежие.
      */
     public function index(): View
     {
+        $allowedSortFields = ['date', 'contractor', 'employee'];
+        $sortField = request('sort', 'date');
+        $sortDirection = request('direction', 'desc');
+
+        if (! in_array($sortField, $allowedSortFields)) {
+            $sortField = 'date';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
         $events = Event::query()
             ->with(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'project', 'request', 'proposal'])
             ->whereHas('employedPerson.contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
@@ -27,11 +40,32 @@ class EventController extends Controller
             })
             ->when(request('from'), fn ($q) => $q->where('date', '>=', request('from')))
             ->when(request('to'), fn ($q) => $q->where('date', '<=', request('to')))
-            ->orderBy('id')
+            ->when(request('q'), function ($query, $q): void {
+                // Поиск по подстроке в Теме или Описании (группировка OR в замыкании)
+                $query->where(function ($sub) use ($q): void {
+                    $sub->where('subject', 'like', '%'.$q.'%')
+                        ->orWhere('description', 'like', '%'.$q.'%');
+                });
+            })
+            ->when($sortField === 'contractor', function ($query) use ($sortDirection): void {
+                // Сортировка по имени контрагента (косвенная связь через employed_people, 1-к-1, дублей нет)
+                $query->leftJoin('employed_people', 'events.employed_person_id', '=', 'employed_people.id')
+                    ->leftJoin('contractors', 'employed_people.contractor_id', '=', 'contractors.id')
+                    ->select('events.*')
+                    ->orderBy('contractors.name', $sortDirection);
+            })
+            ->when($sortField === 'employee', function ($query) use ($sortDirection): void {
+                // Сортировка по ФИО сотрудника (косвенная связь через employed_people, 1-к-1, дублей нет)
+                $query->leftJoin('employed_people', 'events.employed_person_id', '=', 'employed_people.id')
+                    ->leftJoin('contact_people', 'employed_people.contact_person_id', '=', 'contact_people.id')
+                    ->select('events.*')
+                    ->orderBy('contact_people.fio', $sortDirection);
+            })
+            ->when($sortField === 'date', fn ($query) => $query->orderBy('date', $sortDirection))
             ->paginate(10)
-            ->appends(['from' => request('from'), 'to' => request('to')]);
+            ->appends(['q' => request('q'), 'from' => request('from'), 'to' => request('to'), 'sort' => $sortField, 'direction' => $sortDirection]);
 
-        return view('events.index', compact('events'));
+        return view('events.index', compact('events', 'sortField', 'sortDirection'));
     }
 
     /**

@@ -91,10 +91,10 @@ class ProjectCrudTest extends TestCase
         $this->actingAs($manager)->put(route('projects.update', $project), [
             'name' => 'Обновлённый проект',
             'date' => '2026-01-15',
-            'status' => 'in_progress',
+            'status' => 'development',
         ])->assertRedirect(route('projects.show', $project));
 
-        $this->assertDatabaseHas('projects', ['id' => $project->id, 'name' => 'Обновлённый проект', 'status' => 'in_progress']);
+        $this->assertDatabaseHas('projects', ['id' => $project->id, 'name' => 'Обновлённый проект', 'status' => 'development']);
     }
 
     /**
@@ -147,7 +147,7 @@ class ProjectCrudTest extends TestCase
             ->post(route('projects.store', $contractor), [
                 'name' => 'Сварка корпуса',
                 'date' => '2026-02-01',
-                'status' => 'new',
+                'status' => 'concept',
                 'description' => 'Описание проекта',
             ])
             ->assertRedirect(route('contractors.show', $contractor));

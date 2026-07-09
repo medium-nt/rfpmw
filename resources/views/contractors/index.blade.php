@@ -36,11 +36,15 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Название</th>
+                        <th>
+                            <x-sort-link field="name" title="Название" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th class="d-none d-lg-table-cell">Головной контрагент</th>
                         <th>Факт адрес</th>
                         <th class="d-none d-lg-table-cell">Сайт</th>
-                        <th>ИНН</th>
+                        <th>
+                            <x-sort-link field="inn" title="ИНН" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

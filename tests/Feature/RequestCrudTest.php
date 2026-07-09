@@ -93,10 +93,10 @@ class RequestCrudTest extends TestCase
         $this->actingAs($manager)->put(route('requests.update', $request), [
             'employed_person_id' => $request->employed_person_id,
             'date' => '2026-03-15',
-            'status' => 'processing',
+            'status' => 'waiting_reply',
         ])->assertRedirect(route('requests.show', $request));
 
-        $this->assertDatabaseHas('requests', ['id' => $request->id, 'status' => 'processing']);
+        $this->assertDatabaseHas('requests', ['id' => $request->id, 'status' => 'waiting_reply']);
         $this->assertSame('2026-03-15 00:00:00', $request->fresh()->date->format('Y-m-d H:i:s'));
     }
 

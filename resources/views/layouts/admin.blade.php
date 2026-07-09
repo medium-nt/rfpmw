@@ -33,6 +33,21 @@
         .dl-horizontal-scroll { overflow-x: auto; }
         .dl-horizontal-scroll > .row { margin-left: 0; margin-right: 0; }
         .dl-horizontal-scroll dd { white-space: nowrap; }
+
+        /* Сортировка: визуальные индикаторы */
+        .sort-icon {
+            opacity: 0.3;
+            transition: opacity 0.2s;
+            font-size: 0.8em;
+        }
+        a:hover .sort-icon {
+            opacity: 0.6;
+        }
+        /* Активное поле: полная яркость */
+        .sort-icon:not(:empty) {
+            opacity: 1 !important;
+            font-weight: bold;
+        }
     </style>
 @endpush
 

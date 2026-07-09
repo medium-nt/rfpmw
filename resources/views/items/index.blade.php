@@ -36,8 +36,12 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>SKU (артикул)</th>
-                        <th>Вендор</th>
+                        <th>
+                            <x-sort-link field="sku" title="SKU (артикул)" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
+                        <th>
+                            <x-sort-link field="vendor" title="Вендор" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
                         <th>Описание</th>
                     </tr>
                 </thead>
