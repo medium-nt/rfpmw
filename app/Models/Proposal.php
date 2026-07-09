@@ -88,10 +88,11 @@ class Proposal extends Model
     {
         return [
             'draft' => 'Черновик',
-            'sent' => 'Отправлено',
-            'accepted' => 'Принято',
-            'rejected' => 'Отклонено',
-            'expired' => 'Истекло',
+            'sent' => 'КП отправлено',
+            'feedback_needed' => 'Нужна обратная связь клиента',
+            'invoiced' => 'Выставлен счёт',
+            'rejected' => 'Отклонено клиентом',
+            'outdated' => 'Неактуальное',
         ];
     }
 }

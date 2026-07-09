@@ -88,7 +88,7 @@ class Request extends Model
     {
         return [
             'new' => 'Новый',
-            'processing' => 'В обработке',
+            'waiting_reply' => 'Ожидает ответа',
             'quoted' => 'Отправлено КП',
             'closed' => 'Закрыт',
         ];

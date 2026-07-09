@@ -89,10 +89,11 @@ class Project extends Model
     public static function getStatuses(): array
     {
         return [
-            'new' => 'Новый',
-            'in_progress' => 'В работе',
+            'concept' => 'Концепт',
+            'development' => 'Разработка',
+            'testing' => 'Тестирование образцов',
+            'serial' => 'В серии',
             'completed' => 'Завершён',
-            'cancelled' => 'Отменён',
         ];
     }
 }
