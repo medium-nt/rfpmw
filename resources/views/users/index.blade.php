@@ -11,9 +11,9 @@
         <div class="card-header">
             <div class="d-flex align-items-center flex-wrap">
                 <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm mb-2 mr-2">
-                    <i class="fas fa-plus"></i> Добавить пользователя
+                    <i class="fas fa-plus"></i> <span class="d-none d-md-inline">Добавить пользователя</span>
                 </a>
-                <form action="{{ route('users.index') }}" method="get" class="form-inline mb-2 ml-auto">
+                <form action="{{ route('users.index') }}" method="get" class="form-inline mb-2 flex-fill ml-md-auto">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>

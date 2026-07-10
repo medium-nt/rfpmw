@@ -44,7 +44,7 @@
                 <dd class="col-6 col-sm-9 col-md-10">{{ number_format((float) $project->usd_value, 2, '.', ' ') }}</dd>
 
                 <dt class="col-6 col-sm-3 col-md-2">Описание</dt>
-                <dd class="col-6 col-sm-9 col-md-10">{{ $project->description ?? '—' }}</dd>
+                <dd class="col-6 col-sm-9 col-md-10 text-multiline">{{ $project->description ?? '—' }}</dd>
             </dl>
             </div>
         </div>
