@@ -9,8 +9,8 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="d-flex flex-column flex-md-row align-items-center flex-wrap">
-                <form method="get" class="form-inline mb-2 mb-md-0 w-100">
+            <div class="search-bar d-flex flex-column flex-md-row justify-content-between align-items-md-center flex-wrap">
+                <form method="get" class="form-inline mb-2 mb-md-0">
                     <label class="mr-2 mb-0">Дата от:</label>
                     <input type="date" name="from" value="{{ request('from') }}"
                            max="{{ request('to') }}"
@@ -22,7 +22,7 @@
                            onchange="updatePageWithQueryParam(this)"
                            class="form-control form-control-sm">
                 </form>
-                <form action="{{ route('projects.index') }}" method="get" class="form-inline mb-2 mb-md-0 w-100">
+                <form action="{{ route('projects.index') }}" method="get" class="form-inline mb-2 mb-md-0">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>

@@ -9,8 +9,8 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-end">
-                <form action="{{ route('contact-people.index') }}" method="get" class="form-inline mb-2">
+            <div class="w-100">
+                <form action="{{ route('contact-people.index') }}" method="get" class="form-inline mb-2 w-100">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
