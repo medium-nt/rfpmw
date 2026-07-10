@@ -64,6 +64,14 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-group col-12">
+                        <label for="comment">Комментарий</label>
+                        <textarea id="comment" name="comment" rows="3"
+                            class="form-control @error('comment') is-invalid @enderror">{{ old('comment') }}</textarea>
+                        @error('comment')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary" @disabled(empty($employedPeople))>

@@ -35,6 +35,7 @@ class UpdateProposalRequest extends FormRequest
             ],
             'date' => ['required', 'date'],
             'status' => ['nullable', 'string', Rule::in(array_keys(Proposal::getStatuses()))],
+            'comment' => ['nullable', 'string'],
         ];
     }
 }

@@ -3,7 +3,12 @@
 @section('title', 'КП ' . ($proposal->date?->format('d.m.Y') ?? '—'))
 
 @section('content_header')
-    <h1>КП {{ $proposal->date?->format('d.m.Y') ?? '—' }}</h1>
+    <h1>
+        КП {{ $proposal->date?->format('d.m.Y') ?? '—' }}
+        @if ($proposal->status)
+            <span class="badge badge-info">{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status }}</span>
+        @endif
+    </h1>
 @endsection
 
 @section('content')
@@ -20,16 +25,12 @@
                 <dt class="col-5 col-sm-3 col-md-2">Дата</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Статус</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Заказчик</dt>
                 <dd class="col-7 col-sm-9 col-md-10">
-                    @if ($proposal->status)
-                        <span class="badge badge-info">{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status }}</span>
-                    @else
-                        —
-                    @endif
+                    <a href="{{ route('contractors.show', [$proposal->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $proposal->employedPerson->contractor?->name }}</a>
                 </dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Сотрудник</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Кому</dt>
                 <dd class="col-7 col-sm-9 col-md-10">
                     @if ($proposal->employedPerson)
                         {{ $proposal->employedPerson->contactPerson?->fio ?? '—' }}
@@ -40,17 +41,6 @@
                         —
                     @endif
                 </dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Контрагент</dt>
-                <dd class="col-7 col-sm-9 col-md-10">
-                    <a href="{{ route('contractors.show', [$proposal->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $proposal->employedPerson->contractor?->name }}</a>
-                </dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Менеджер</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ $proposal->user?->name ?? '—' }}</dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Сумма, USD</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</dd>
             </dl>
             </div>
         </div>
@@ -75,6 +65,7 @@
                 <table class="table table-bordered table-striped mb-0">
                     <thead>
                         <tr>
+                            <th class="text-center" style="width: 1%;">№</th>
                             <th>Артикул</th>
                             <th>Вендор</th>
                             <th class="text-right">Кол-во</th>
@@ -86,6 +77,7 @@
                     <tbody>
                         @forelse ($proposal->proposalItems as $proposalItem)
                             <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($proposalItem->item)
                                         @if ($proposalItem->item->trashed())
@@ -117,12 +109,28 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-3">Позиции отсутствуют.</td>
+                                <td colspan="7" class="text-center text-muted py-3">Позиции отсутствуют.</td>
                             </tr>
                         @endforelse
                     </tbody>
+                    @if ($proposal->proposalItems->isNotEmpty())
+                        @php
+                            $total = $proposal->proposalItems->sum(fn ($i) => (float) $i->price * (int) $i->quantity);
+                        @endphp
+                        <tfoot>
+                            <tr class="font-weight-bold">
+                                <td colspan="5" class="text-right">Итого, USD</td>
+                                <td class="text-right">{{ number_format((float) $total, 2, '.', ' ') }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             </div>
+
+            @if ($proposal->comment)
+                <div class="mt-3" style="white-space: pre-wrap; word-break: break-word; text-indent: 0; margin: 0; padding: 0;">{{ $proposal->comment }}</div>
+            @endif
 
             <hr>
 
@@ -157,7 +165,7 @@
                         <label for="price">Цена, USD</label>
                         <input type="number" id="price" name="price" min="0" step="0.01"
                             class="form-control @error('price') is-invalid @enderror"
-                            value="{{ old('price') }}" required>
+                            value="{{ old('price') }}">
                         @error('price')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['employed_person_id', 'user_id', 'date', 'usd_value', 'status'])]
+#[Fillable(['employed_person_id', 'user_id', 'date', 'usd_value', 'status', 'comment'])]
 class Proposal extends Model
 {
     /** @use HasFactory<ProposalFactory> */
