@@ -55,6 +55,14 @@
             opacity: 1 !important;
             font-weight: bold;
         }
+
+        /* Поисковые/фильтровочные формы в шапке карточек:
+           на мобильных растягиваются на всю ширину строки. */
+        @media (max-width: 767.98px) {
+            .search-bar > form {
+                width: 100%;
+            }
+        }
     </style>
 @endpush
 

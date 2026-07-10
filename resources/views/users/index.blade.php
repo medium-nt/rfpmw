@@ -10,10 +10,10 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex align-items-center flex-wrap">
-                <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm mb-2 mr-2">
+                <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm mr-0 mr-md-2 mb-2 mb-md-0">
                     <i class="fas fa-plus"></i> <span class="d-none d-md-inline">Добавить пользователя</span>
                 </a>
-                <form action="{{ route('users.index') }}" method="get" class="form-inline mb-2 flex-fill ml-md-auto">
+                <form action="{{ route('users.index') }}" method="get" class="form-inline mb-2 ml-auto">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
