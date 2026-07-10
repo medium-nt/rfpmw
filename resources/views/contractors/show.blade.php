@@ -103,6 +103,7 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer">{{ $events->links() }}</div>
     </div>
 
     <div class="card card-info card-outline mt-3">
@@ -136,7 +137,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($contractor->employedPeople as $employed)
+                        @forelse ($employedPeople as $employed)
                             <tr>
                                 <td>
                                     <a href="{{ route('contact-people.show', [$employed->contactPerson, 'from' => '/' . request()->path()]) }}">
@@ -167,6 +168,8 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="mt-2">{{ $employedPeople->links() }}</div>
 
             <hr>
 
@@ -222,7 +225,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($contractor->projects as $project)
+                    @forelse ($projects as $project)
                         <tr>
                             <td>
                                 <a href="{{ route('projects.show', [$project, 'from' => '/' . request()->path()]) }}">{{ $project->name }}</a>
@@ -239,6 +242,7 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer">{{ $projects->links() }}</div>
     </div>
 
     <div class="card card-warning card-outline mt-3">
@@ -278,6 +282,7 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer">{{ $requests->links() }}</div>
     </div>
 
     <div class="card card-success card-outline mt-3">
@@ -317,6 +322,7 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer">{{ $proposals->links() }}</div>
     </div>
 
     @can('is-admin')

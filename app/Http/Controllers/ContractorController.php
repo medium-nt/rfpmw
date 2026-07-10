@@ -15,12 +15,16 @@ use App\Services\DaData\DadataService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use RuntimeException;
 
 class ContractorController extends Controller
 {
+    /** Размер страницы для независимой пагинации связанных сущностей в карточке контрагента. */
+    private const int PER_PAGE = 5;
+
     /**
      * Список контрагентов с data scoping: админ видит всех, менеджер — только своих.
      * Поиск по названию (name) или ИНН (inn) через GET-параметр ?q=.
@@ -129,8 +133,14 @@ class ContractorController extends Controller
     /**
      * Карточка контрагента с данными, контактными лицами и действиями.
      *
-     * Блоки связанных сущностей отсортированы по умолчанию: события/запросы/КП/проекты —
-     * по дате (desc, свежие сверху), контактные лица — по ФИО (алфавит, asc).
+     * Каждый блок связанных сущностей (события, контактные лица, проекты, запросы, КП)
+     * пагинируется независимо — по PER_PAGE записей, через собственный query-параметр
+     * (?page_events, ?page_contacts, ?page_projects, ?page_requests, ?page_proposals),
+     * чтобы листание одного блока не сбрасывало страницы остальных. appends() сохраняет
+     * чужие page_*-параметры при переходе по страницам.
+     *
+     * Сортировка по умолчанию: события/запросы/КП/проекты — по дате (desc, свежие сверху),
+     * контактные лица — по ФИО (алфавит, asc).
      */
     public function show(Contractor $contractor): View
     {
@@ -138,7 +148,6 @@ class ContractorController extends Controller
 
         $contractor->load([
             'employedPeople.contactPerson',
-            'projects' => fn ($q) => $q->orderBy('date', 'desc')->with('responsiblePerson.contactPerson'),
             'parent',
         ]);
 
@@ -149,30 +158,59 @@ class ContractorController extends Controller
             $contractor->employedPeople->sortBy(fn ($ep) => mb_strtolower($ep->contactPerson?->fio ?? ''))->values()
         );
 
+        // Независимая пагинация контактных лиц: коллекция уже отсортирована, режем вручную
+        // (контактных лиц обычно мало, SQL-пагинация по contactPerson.fio была бы оверинжинирингом).
+        $peoplePage = LengthAwarePaginator::resolveCurrentPage('page_contacts');
+        $employedPeople = new LengthAwarePaginator(
+            $contractor->employedPeople->forPage($peoplePage, self::PER_PAGE),
+            $contractor->employedPeople->count(),
+            self::PER_PAGE,
+            $peoplePage,
+            ['pageName' => 'page_contacts', 'path' => request()->url()],
+        );
+        $employedPeople->appends(request()->except('page_contacts'));
+
         $availablePeople = ContactPerson::query()
             ->whereDoesntHave('employedPeople', fn ($q) => $q->where('contractor_id', $contractor->id)->whereNull('deleted_at'))
             ->orderBy('fio')
             ->get();
 
+        $projects = $contractor->projects()
+            ->with('responsiblePerson.contactPerson')
+            ->orderByDesc('date')
+            ->paginate(self::PER_PAGE, ['*'], 'page_projects')
+            ->appends(request()->except('page_projects'));
+
         $requests = Request::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
             ->orderByDesc('date')
-            ->get();
+            ->paginate(self::PER_PAGE, ['*'], 'page_requests')
+            ->appends(request()->except('page_requests'));
 
         $proposals = Proposal::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
             ->orderByDesc('date')
-            ->get();
+            ->paginate(self::PER_PAGE, ['*'], 'page_proposals')
+            ->appends(request()->except('page_proposals'));
 
         $events = Event::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
             ->with(['employedPerson.contactPerson', 'user'])
             ->orderByDesc('date')
-            ->get();
+            ->paginate(self::PER_PAGE, ['*'], 'page_events')
+            ->appends(request()->except('page_events'));
 
-        return view('contractors.show', compact('contractor', 'availablePeople', 'requests', 'proposals', 'events'));
+        return view('contractors.show', compact(
+            'contractor',
+            'availablePeople',
+            'employedPeople',
+            'projects',
+            'requests',
+            'proposals',
+            'events',
+        ));
     }
 
     /**
