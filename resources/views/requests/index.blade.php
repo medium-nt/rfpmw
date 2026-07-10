@@ -9,18 +9,38 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <form method="get" class="form-inline">
-                <label class="mr-2 mb-0">Дата от:</label>
-                <input type="date" name="from" value="{{ request('from') }}"
-                       max="{{ request('to') }}"
-                       onchange="updatePageWithQueryParam(this)"
-                       class="form-control form-control-sm mr-3">
-                <label class="mr-2 mb-0">до:</label>
-                <input type="date" name="to" value="{{ request('to') }}"
-                       min="{{ request('from') }}"
-                       onchange="updatePageWithQueryParam(this)"
-                       class="form-control form-control-sm">
-            </form>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <form method="get" class="form-inline mb-2 mb-md-0">
+                    <label class="mr-2 mb-0">Дата от:</label>
+                    <input type="date" name="from" value="{{ request('from') }}"
+                           max="{{ request('to') }}"
+                           onchange="updatePageWithQueryParam(this)"
+                           class="form-control form-control-sm mr-3">
+                    <label class="mr-2 mb-0">до:</label>
+                    <input type="date" name="to" value="{{ request('to') }}"
+                           min="{{ request('from') }}"
+                           onchange="updatePageWithQueryParam(this)"
+                           class="form-control form-control-sm">
+                </form>
+                <form action="{{ route('requests.index') }}" method="get" class="form-inline mb-2 mb-md-0">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" name="q" value="{{ request('q') }}"
+                               onchange="updatePageWithQueryParam(this)"
+                               onkeydown="if(event.key==='Enter'){event.preventDefault();updatePageWithQueryParam(this);}"
+                               class="form-control" placeholder="Заказчик...">
+                        @if (request('q'))
+                            <div class="input-group-append">
+                                <a href="{{ request()->fullUrlWithoutQuery('q') }}" class="btn btn-outline-secondary" title="Очистить">
+                                    <i class="fas fa-times text-danger"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="card-body table-responsive p-0">
             <table class="table table-bordered table-striped">
