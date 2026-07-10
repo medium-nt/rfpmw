@@ -54,6 +54,7 @@
                         </th>
                         <th>Дата выхода в серию</th>
                         <th>Статус</th>
+                        <th class="text-right">Сумма, USD</th>
                         <th>Ответственный</th>
                     </tr>
                 </thead>
@@ -68,11 +69,12 @@
                             </td>
                             <td>{{ $project->date?->format('d.m.Y') ?? '—' }}</td>
                             <td>{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status ?? '—' }}</td>
+                            <td class="text-right">{{ number_format((float) $project->usd_value, 2, '.', ' ') }}</td>
                             <td title="{{ $project->responsiblePerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($project->responsiblePerson?->contactPerson?->fio ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Проекты не найдены.</td>
+                            <td colspan="7" class="text-center text-muted">Проекты не найдены.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -49,12 +49,13 @@
                         <th>
                             <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Сотрудник</th>
+                        <th class="d-none d-sm-table-cell">Сотрудник</th>
                         <th>
                             <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
                         <th>Статус</th>
-                        <th>Менеджер</th>
+                        <th class="d-none d-sm-table-cell">Менеджер</th>
+                        <th>Сумма, USD</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,12 +64,13 @@
                             <td>
                                 <a href="{{ route('requests.show', $request) }}">{{ $request->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td title="{{ $request->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
+                            <td class="d-none d-sm-table-cell" title="{{ $request->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
                                 <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}" title="{{ $request->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contractor?->name ?? '—', 20) }}</a>
                             </td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
-                            <td title="{{ $request->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->user?->name ?? '—', 20) }}</td>
+                            <td class="d-none d-sm-table-cell" title="{{ $request->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->user?->name ?? '—', 20) }}</td>
+                            <td class="text-right">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</td>
                         </tr>
                     @empty
                         <tr>

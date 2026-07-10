@@ -30,7 +30,12 @@ class ItemController extends Controller
         }
 
         $items = Item::with('vendor')
-            ->when(request('q'), fn ($query) => $query->where('sku', 'like', '%'.request('q').'%'))
+            ->when(request('q'), function ($query, $q): void {
+                $query->where(function ($sub) use ($q): void {
+                    $sub->where('sku', 'like', '%'.$q.'%')
+                        ->orWhereHas('vendor', fn ($v) => $v->where('name', 'like', '%'.$q.'%'));
+                });
+            })
             ->when($sortField === 'vendor', function ($query) use ($sortDirection): void {
                 // Сортировка по имени вендора (прямая связь vendor_id, может быть NULL — leftJoin)
                 $query->leftJoin('contractors as vendors', 'items.vendor_id', '=', 'vendors.id')

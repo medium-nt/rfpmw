@@ -19,7 +19,7 @@
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
                         <input type="text" name="q" value="{{ request('q') }}"
-                               class="form-control" placeholder="Артикул...">
+                               class="form-control" placeholder="Артикул или вендор...">
                         @if (request('q'))
                             <div class="input-group-append">
                                 <a href="{{ route('items.index') }}" class="btn btn-outline-secondary" title="Очистить">

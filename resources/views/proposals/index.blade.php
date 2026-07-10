@@ -49,12 +49,13 @@
                         <th>
                             <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Сотрудник</th>
+                        <th class="d-none d-sm-table-cell">Сотрудник</th>
                         <th>
                             <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
                         <th>Статус</th>
-                        <th>Менеджер</th>
+                        <th class="d-none d-sm-table-cell">Менеджер</th>
+                        <th>Сумма, USD</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,7 +64,7 @@
                             <td>
                                 <a href="{{ route('proposals.show', $proposal) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td title="{{ $proposal->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
+                            <td class="d-none d-sm-table-cell" title="{{ $proposal->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
                                 @if ($proposal->employedPerson?->contractor)
                                     <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}" title="{{ $proposal->employedPerson->contractor->name }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson->contractor->name, 20) }}</a>
@@ -72,11 +73,12 @@
                                 @endif
                             </td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
-                            <td title="{{ $proposal->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->user?->name ?? '—', 20) }}</td>
+                            <td class="d-none d-sm-table-cell" title="{{ $proposal->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->user?->name ?? '—', 20) }}</td>
+                            <td class="text-right">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted">Коммерческие предложения не найдены.</td>
+                            <td colspan="6" class="text-center text-muted">Коммерческие предложения не найдены.</td>
                         </tr>
                     @endforelse
                 </tbody>
