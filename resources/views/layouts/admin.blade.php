@@ -28,11 +28,18 @@
         }
 
         /* Горизонтальный скролл карточки dl/dt/dd на show-страницах:
-           длинные значения (адреса, описания) держатся одной строкой,
+           длинные значения (адреса и т.п.) держатся одной строкой,
            при переполнении срабатывает overflow-x:auto на родителе. */
         .dl-horizontal-scroll { overflow-x: auto; }
         .dl-horizontal-scroll > .row { margin-left: 0; margin-right: 0; }
         .dl-horizontal-scroll dd { white-space: nowrap; }
+
+        /* Многострочные значения dl (описания): перенос по словам
+           с сохранением переносов строк из textarea. */
+        .dl-horizontal-scroll dd.text-multiline {
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
 
         /* Сортировка: визуальные индикаторы */
         .sort-icon {
