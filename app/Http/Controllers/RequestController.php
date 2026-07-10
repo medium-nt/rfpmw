@@ -36,6 +36,10 @@ class RequestController extends Controller
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPerson.contractor', fn ($qq) => $qq->where('user_id', auth()->id()));
             })
+            ->when(request('q'), function ($query, $q): void {
+                // Поиск по имени контрагента (косвенная связь через сотрудника)
+                $query->whereHas('employedPerson.contractor', fn ($c) => $c->where('contractors.name', 'like', '%'.$q.'%'));
+            })
             ->when(request('from'), fn ($q) => $q->where('date', '>=', request('from')))
             ->when(request('to'), fn ($q) => $q->where('date', '<=', request('to')))
             ->when($sortField === 'contractor', function ($query) use ($sortDirection): void {
@@ -48,7 +52,7 @@ class RequestController extends Controller
                 $query->orderBy('date', $sortDirection);
             })
             ->paginate(10)
-            ->appends(['from' => request('from'), 'to' => request('to'), 'sort' => $sortField, 'direction' => $sortDirection]);
+            ->appends(['from' => request('from'), 'to' => request('to'), 'q' => request('q'), 'sort' => $sortField, 'direction' => $sortDirection]);
 
         return view('requests.index', compact('requests', 'sortField', 'sortDirection'));
     }

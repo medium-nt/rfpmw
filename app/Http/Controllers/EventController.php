@@ -41,10 +41,11 @@ class EventController extends Controller
             ->when(request('from'), fn ($q) => $q->where('date', '>=', request('from')))
             ->when(request('to'), fn ($q) => $q->where('date', '<=', request('to')))
             ->when(request('q'), function ($query, $q): void {
-                // Поиск по подстроке в Теме или Описании (группировка OR в замыкании)
+                // Поиск по подстроке в Теме, Описании или имени контрагента (группировка OR в замыкании)
                 $query->where(function ($sub) use ($q): void {
                     $sub->where('subject', 'like', '%'.$q.'%')
-                        ->orWhere('description', 'like', '%'.$q.'%');
+                        ->orWhere('description', 'like', '%'.$q.'%')
+                        ->orWhereHas('employedPerson.contractor', fn ($c) => $c->where('contractors.name', 'like', '%'.$q.'%'));
                 });
             })
             ->when($sortField === 'contractor', function ($query) use ($sortDirection): void {
