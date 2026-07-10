@@ -3,7 +3,12 @@
 @section('title', 'Запрос ' . ($request->date?->format('d.m.Y') ?? '—'))
 
 @section('content_header')
-    <h1>Запрос {{ $request->date?->format('d.m.Y') ?? '—' }}</h1>
+    <h1>
+        Запрос {{ $request->date?->format('d.m.Y') ?? '—' }}
+        @if ($request->status)
+            <span class="badge badge-info">{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status }}</span>
+        @endif
+    </h1>
 @endsection
 
 @section('content')
@@ -20,37 +25,22 @@
                 <dt class="col-5 col-sm-3 col-md-2">Дата</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $request->date?->format('d.m.Y') ?? '—' }}</dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Статус</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Заказчик</dt>
                 <dd class="col-7 col-sm-9 col-md-10">
-                    @if ($request->status)
-                        <span class="badge badge-info">{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status }}</span>
-                    @else
-                        —
-                    @endif
+                    <a href="{{ route('contractors.show', [$request->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $request->employedPerson->contractor?->name }}</a>
                 </dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Сотрудник</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Кому</dt>
                 <dd class="col-7 col-sm-9 col-md-10">
                     @if ($request->employedPerson)
-                                        {{ $request->employedPerson->contactPerson?->fio ?? '—' }}
+                        {{ $request->employedPerson->contactPerson?->fio ?? '—' }}
                         @if ($request->employedPerson->position)
-                                            <span class="text-muted">({{ $request->employedPerson->position }})</span>
+                            <span class="text-muted">({{ $request->employedPerson->position }})</span>
                         @endif
                     @else
                         —
                     @endif
                 </dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Контрагент</dt>
-                <dd class="col-7 col-sm-9 col-md-10">
-                    <a href="{{ route('contractors.show', [$request->employedPerson->contractor, 'from' => '/' . request()->path()]) }}">{{ $request->employedPerson->contractor?->name }}</a>
-                </dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Менеджер</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ $request->user?->name ?? '—' }}</dd>
-
-                <dt class="col-5 col-sm-3 col-md-2">Сумма, USD</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</dd>
             </dl>
             </div>
         </div>
@@ -75,6 +65,7 @@
                 <table class="table table-bordered table-striped mb-0">
                     <thead>
                         <tr>
+                            <th class="text-center" style="width: 1%;">№</th>
                             <th>Артикул</th>
                             <th>Вендор</th>
                             <th class="text-right">Кол-во</th>
@@ -86,6 +77,7 @@
                     <tbody>
                         @forelse ($request->requestItems as $requestItem)
                             <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>
                                     @if ($requestItem->item)
                                         @if ($requestItem->item->trashed())
@@ -117,12 +109,28 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-3">Позиции отсутствуют.</td>
+                                <td colspan="7" class="text-center text-muted py-3">Позиции отсутствуют.</td>
                             </tr>
                         @endforelse
                     </tbody>
+                    @if ($request->requestItems->isNotEmpty())
+                        @php
+                            $total = $request->requestItems->sum(fn ($i) => (float) $i->price * (int) $i->quantity);
+                        @endphp
+                        <tfoot>
+                            <tr class="font-weight-bold">
+                                <td colspan="5" class="text-right">Итого, USD</td>
+                                <td class="text-right">{{ number_format((float) $total, 2, '.', ' ') }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             </div>
+
+            @if ($request->comment)
+                <div class="mt-3" style="white-space: pre-wrap; word-break: break-word; text-indent: 0; margin: 0; padding: 0;">{{ $request->comment }}</div>
+            @endif
 
             <hr>
 

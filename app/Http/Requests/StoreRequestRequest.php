@@ -35,6 +35,7 @@ class StoreRequestRequest extends FormRequest
             ],
             'date' => ['required', 'date'],
             'status' => ['nullable', 'string', Rule::in(array_keys(Request::getStatuses()))],
+            'comment' => ['nullable', 'string'],
         ];
     }
 }
