@@ -54,10 +54,10 @@
             </div>
 
             <div class="mt-3">
+                @can('is-admin')
                 <a href="{{ route('items.edit', $item) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Изменить
                 </a>
-                @can('is-admin')
                 <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline">
                     @csrf
                     @method('DELETE')
