@@ -343,7 +343,12 @@ return [
             'route' => 'events.index',
         ],
         [
-            'text' => 'Настройки',
+            'text' => 'Артикулы',
+            'icon' => 'fas fa-fw fa-barcode',
+            'route' => 'items.index',
+        ],
+        [
+            'text' => '',
             'icon' => 'fas fa-fw fa-cogs',
             'can' => 'is-admin',
             'submenu' => [
@@ -351,12 +356,6 @@ return [
                     'text' => 'Пользователи',
                     'route' => 'users.index',
                     'icon' => 'fas fa-fw fa-users',
-                    'can' => 'is-admin',
-                ],
-                [
-                    'text' => 'Артикулы',
-                    'route' => 'items.index',
-                    'icon' => 'fas fa-fw fa-barcode',
                     'can' => 'is-admin',
                 ],
                 [

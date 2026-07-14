@@ -41,17 +41,17 @@ Route::middleware(['auth', 'can:is-admin'])
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 
-Route::middleware(['auth', 'can:is-admin'])
+Route::middleware(['auth'])
     ->name('items.')
     ->prefix('items')
     ->group(function () {
         Route::get('/', [ItemController::class, 'index'])->name('index');
         Route::get('/create', [ItemController::class, 'create'])->name('create');
         Route::post('/', [ItemController::class, 'store'])->name('store');
-        Route::get('/{item}/edit', [ItemController::class, 'edit'])->name('edit');
-        Route::put('/{item}', [ItemController::class, 'update'])->name('update');
+        Route::get('/{item}/edit', [ItemController::class, 'edit'])->middleware('can:is-admin')->name('edit');
+        Route::put('/{item}', [ItemController::class, 'update'])->middleware('can:is-admin')->name('update');
         Route::get('/{item}', [ItemController::class, 'show'])->name('show');
-        Route::delete('/{item}', [ItemController::class, 'destroy'])->name('destroy');
+        Route::delete('/{item}', [ItemController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');
     });
 
 Route::middleware(['auth'])

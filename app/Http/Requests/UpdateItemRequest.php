@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 class UpdateItemRequest extends FormRequest
 {
     /**
-     * Доступ разрешён через middleware can:is-admin (только админ).
+     * Доступ разрешён через middleware can:is-admin на роуте (только админ).
      */
     public function authorize(): bool
     {

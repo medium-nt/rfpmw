@@ -12,7 +12,8 @@ use Illuminate\Validation\Rule;
 class StoreItemRequest extends FormRequest
 {
     /**
-     * Доступ разрешён через middleware can:is-admin (только админ).
+     * Доступ разрешён через middleware: store доступен всем авторизованным
+     * (админ + менеджер), ограничение на уровне роута не требуется.
      */
     public function authorize(): bool
     {
