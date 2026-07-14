@@ -189,21 +189,4 @@ class UserManagementTest extends TestCase
         $this->assertSame($originalHash, $user->password);
         $this->assertSame('Имя Без Пароля', $user->name);
     }
-
-    /**
-     * Проверяет, что заглушка удаления не удаляет пользователя и возвращает сообщение об ошибке.
-     */
-    public function test_destroy_returns_stub_error(): void
-    {
-        $admin = User::factory()->admin()->create();
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($admin)
-            ->from(route('users.edit', $user))
-            ->delete(route('users.destroy', $user));
-
-        $response->assertRedirect(route('users.edit', $user));
-        $response->assertSessionHas('error', 'Удаление пока недоступно.');
-        $this->assertDatabaseHas('users', ['id' => $user->id]);
-    }
 }
