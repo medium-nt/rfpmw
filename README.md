@@ -1,58 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <h1 align="center">RFPMW — CRM</h1>
+  <p align="center">Система управления контрагентами.</p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP 8.3+">
+    <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
+    <img src="https://img.shields.io/badge/AdminLTE-3-00A65A?logo=adminlte&logoColor=white" alt="AdminLTE 3">
+  </p>
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📖 О проекте
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**RFPMW** — внутренняя CRM для ведения базы контрагентов, контактных лиц и управления
+воронкой продаж: от проекта и запроса до коммерческого предложения. Система ведёт журнал
+взаимодействий с сотрудниками контрагентов и автоматически считает суммы по позициям.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Интерфейс построен на **AdminLTE 3** и адаптирован под русскую локаль. Доступ разграничен по
+ролям: менеджер работает только со «своими» контрагентами, администратор видит и может
+редактировать всё.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠 Стек технологий
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Слой | Технология |
+|---|---|
+| Backend | Laravel 13, PHP 8.3 |
+| Frontend | AdminLTE 3 (Bootstrap 5), Blade |
+| База данных | SQLite (по умолчанию) / MySQL |
+| Аутентификация | laravel/ui (вход по **username**, не по email) |
+| Авторизация (RBAC) | собственные роли `admin` / `manager` (без spatie) |
+| Интеграции | DaData (реквизиты контрагента по ИНН) |
+| Код-стайл | Laravel Pint |
+| Тесты | PHPUnit 12 |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## ⚙️ Требования
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- PHP **8.3+**
+- Composer
+
+---
+
+## 🚀 Быстрый старт
 
 ```bash
-composer require laravel/boost --dev
+# 1. Установить зависимости
+composer install
 
-php artisan boost:install
+# 2. Подготовить окружение
+cp .env.example .env
+php artisan key:generate
+
+# 3. Применить миграции
+php artisan migrate
+
+# 4. Запустить тестовый сервер и наполнить тестовыми данными (только для разработки!)
+php artisan serve
+php artisan db:seed
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Откройте приложение по адресу из `APP_URL`.
 
-## Contributing
+### Учётные записи
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Разработка:** после `php artisan db:seed` создаются тестовые учётки `admin`/`111111` и `manager`/`222222`.
 
-## Code of Conduct
+**Продакшен:** создайте администратора интерактивно:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan app:create-admin
+```
+Команда запрашивает имя, логин и пароль (минимум 8 символов) и создаёт пользователя с ролью `admin`. Требует, чтобы роль уже существовала в БД (создаётся сидером ролей).
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔧 Конфигурация
 
-## License
+Основные переменные окружения (`.env`):
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Переменная | Описание |
+|---|---|
+| `APP_LOCALE` | Локаль интерфейса (`ru`). |
+| `DB_CONNECTION` | `sqlite` (по умолчанию) или `mysql`. |
+| `DADATA_API_KEY` | Ключ API DaData для автозаполнения реквизитов по ИНН. |
+| `DADATA_URL` | Endpoint DaData (задан по умолчанию). |
+
+### База данных (MySQL)
+
+По умолчанию используется SQLite (ничего настраивать не нужно). Чтобы запустить проект
+на **MySQL**, сначала создайте пустую базу данных — Laravel создаёт таблицы, но не саму БД:
+
+```sql
+-- в консоли MySQL или в phpMyAdmin
+CREATE DATABASE rfpmw CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Затем пропишите в `.env` параметры подключения:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1      # адрес сервера БД (локально — 127.0.0.1)
+DB_PORT=3306           # порт MySQL (по умолчанию 3306)
+DB_DATABASE=rfpmw      # имя созданной базы данных
+DB_USERNAME=root       # пользователь MySQL
+DB_PASSWORD=           # пароль пользователя (пусто, если без пароля)
+```
+
+После этого примените миграции:
+
+```bash
+php artisan migrate
+```
+
+---
+
+## 🧩 Архитектура
+
+- **Авторизация и доступ (RBAC):** роли реализованы на собственных моделях `Role` + `User`
+  (`isAdmin()` / `isManager()`), доступ к роутам регулируется middleware `can:is-admin`.
+  Роли **не** используют пакет spatie.
+- **Data scoping:** админ видит все записи, менеджер — только те, что привязаны к закреплённым за
+  ним контрагентам. Фильтрация выполняется в контроллерах.
+- **Слои:** контроллеры (`app/Http/Controllers`) + модели Eloquent (`app/Models`) + FormRequest
+  для валидации.
+- **UI:** шаблоны Blade поверх AdminLTE 3 (Bootstrap 5). Промежуточный layout `layouts.admin`
+  (`adminlte::page`) расширяется всеми страницами CRM.
+
+### Ключевые модели
+
+| Модель | Назначение |
+|---|---|
+| `User` / `Role` | Пользователь системы и его роль (1 = Менеджер, 2 = Администратор). |
+| `Contractor` | Контрагент (юридическое лицо), закреплён за менеджером. |
+| `ContactPerson` | Контактное лицо (разделяемая сущность). |
+| `EmployedPerson` | Сотрудник контрагента (привязка контактного лица к контрагенту). |
+| `Project` / `ProjectItem` | Проект и его позиции. |
+| `Request` / `RequestItem` | Запрос и его позиции. |
+| `Proposal` / `ProposalItem` | Коммерческое предложение и его позиции. |
+| `Event` | Событие взаимодействия (звонок / письмо / встреча). |
+| `Item` | Артикул (элемент справочника товаров/услуг). |
+
+---
+
+## ✅ Тесты
+
+```bash
+php artisan test --compact                              # все тесты
+php artisan test --compact tests/Feature/ExampleTest.php # один файл
+php artisan test --compact --filter=testName            # по имени
+```
