@@ -69,7 +69,7 @@
                             <th>Артикул</th>
                             <th>Вендор</th>
                             <th class="text-right">Кол-во</th>
-                            <th class="text-right">Цена, USD</th>
+                            <th class="text-right">Целевая цена</th>
                             <th class="text-right">Сумма, USD</th>
                             <th class="text-right" style="width: 1%;">&nbsp;</th>
                         </tr>

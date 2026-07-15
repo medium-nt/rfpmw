@@ -58,7 +58,7 @@
 
                 <div class="form-row">
                     <div class="form-group col-12 col-md-6">
-                        <label for="responsible_person_id">Ответственный</label>
+                        <label for="responsible_person_id">Конт. лицо</label>
                         <select id="responsible_person_id" name="responsible_person_id"
                             class="form-control @error('responsible_person_id') is-invalid @enderror">
                             <option value="">— Не назначен —</option>

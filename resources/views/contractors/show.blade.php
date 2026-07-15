@@ -50,7 +50,7 @@
                     @endif
                 </dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Регион</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Город</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $contractor->region ?? '—' }}</dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Отрасль</dt>
