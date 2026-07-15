@@ -37,7 +37,7 @@
                     @endif
                 </dd>
 
-                <dt class="col-6 col-sm-3 col-md-2">Ответственный</dt>
+                <dt class="col-6 col-sm-3 col-md-2">Конт. лицо</dt>
                 <dd class="col-6 col-sm-9 col-md-10">{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</dd>
 
                 <dt class="col-6 col-sm-3 col-md-2">Сумма, USD</dt>

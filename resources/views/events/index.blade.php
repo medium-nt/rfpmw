@@ -49,16 +49,13 @@
                         <th>
                             <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Тип</th>
-                        <th>
-                            <x-sort-link field="employee" title="Сотрудник" :current-field="$sortField" :current-direction="$sortDirection" />
-                        </th>
                         <th>
                             <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Тема</th>
-                        <th>Привязка</th>
-                        <th>Менеджер</th>
+                        <th>
+                            <x-sort-link field="employee" title="Сотрудник" :current-field="$sortField" :current-direction="$sortDirection" />
+                        </th>
+                        <th>Результат</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,28 +64,17 @@
                             <td>
                                 <a href="{{ route('events.show', $event) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
-                            <td title="{{ $event->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
                                 <a href="{{ route('contractors.show', $event->employedPerson->contractor) }}" title="{{ $event->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contractor?->name ?? '—', 20) }}</a>
                             </td>
-                            <td title="{{ $event->subject ?? '' }}">{{ \Illuminate\Support\Str::limit($event->subject ?? '—', 20) }}</td>
-                            <td>
-                                @if ($event->project)
-                                    <a href="{{ route('projects.show', $event->project) }}"><i class="fas fa-folder"></i> {{ $event->project->name }}</a>
-                                @elseif ($event->request)
-                                    <a href="{{ route('requests.show', $event->request) }}"><i class="fas fa-inbox"></i> Запрос №{{ $event->request->id }}</a>
-                                @elseif ($event->proposal)
-                                    <a href="{{ route('proposals.show', $event->proposal) }}"><i class="fas fa-file-invoice-dollar"></i> КП №{{ $event->proposal->id }}</a>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
+                            <td title="{{ $event->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
+                            <td title="{{ $event->description ?? '' }}">
+                                <div style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line;">{{ $event->description ?? '—' }}</div>
                             </td>
-                            <td title="{{ $event->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($event->user?->name ?? '—', 20) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">События не найдены.</td>
+                            <td colspan="4" class="text-center text-muted">События не найдены.</td>
                         </tr>
                     @endforelse
                 </tbody>

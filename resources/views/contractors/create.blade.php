@@ -87,7 +87,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="region">Регион</label>
+                    <label for="region">Город</label>
                     <input type="text" id="region" name="region"
                         class="form-control @error('region') is-invalid @enderror"
                         value="{{ old('region') }}">

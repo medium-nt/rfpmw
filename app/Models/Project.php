@@ -94,6 +94,7 @@ class Project extends Model
             'testing' => 'Тестирование образцов',
             'serial' => 'В серии',
             'completed' => 'Завершён',
+            'no_go' => 'Не пошёл',
         ];
     }
 }
