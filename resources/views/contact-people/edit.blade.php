@@ -54,6 +54,19 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-group col-12 col-md-6">
+                        <label for="birth_date">Дата рождения</label>
+                        <input type="date" id="birth_date" name="birth_date"
+                            class="form-control @error('birth_date') is-invalid @enderror"
+                            value="{{ old('birth_date', $person->birth_date?->format('Y-m-d')) }}"
+                            max="{{ now()->format('Y-m-d') }}">
+                        @error('birth_date')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="interests">Доп.информация</label>
                     <textarea id="interests" name="interests"

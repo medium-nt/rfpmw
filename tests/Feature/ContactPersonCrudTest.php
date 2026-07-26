@@ -253,4 +253,179 @@ class ContactPersonCrudTest extends TestCase
             ->assertSee('ООО СвойКлиент')
             ->assertSee('ООО ЧужойКлиентЗет');
     }
+
+    /**
+     * Создание контактного лица с валидной прошедшей датой рождения сохраняет её в БД.
+     */
+    public function test_admin_can_store_contact_person_with_valid_birth_date(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $birthDate = now()->subYears(30)->format('Y-m-d');
+
+        $this->actingAs($admin)
+            ->post(route('contact-people.store', $contractor), [
+                'fio' => 'Иванов Иван',
+                'birth_date' => $birthDate,
+            ])
+            ->assertRedirect(route('contractors.show', $contractor));
+
+        $person = ContactPerson::where('fio', 'Иванов Иван')->first();
+        $this->assertNotNull($person);
+        $this->assertSame($birthDate, $person->birth_date->format('Y-m-d'));
+    }
+
+    /**
+     * Поле birth_date опционально: создание без него оставляет NULL (nullable).
+     */
+    public function test_admin_can_store_contact_person_without_birth_date(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+
+        $this->actingAs($admin)
+            ->post(route('contact-people.store', $contractor), [
+                'fio' => 'Петров Пётр',
+            ])
+            ->assertRedirect(route('contractors.show', $contractor));
+
+        $person = ContactPerson::where('fio', 'Петров Пётр')->first();
+        $this->assertNotNull($person);
+        $this->assertNull($person->birth_date);
+    }
+
+    /**
+     * Валидация: birth_date должна быть корректной датой.
+     */
+    public function test_store_validates_birth_date_must_be_date(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+
+        $this->actingAs($admin)
+            ->post(route('contact-people.store', $contractor), [
+                'fio' => 'Сидоров Сидор',
+                'birth_date' => 'not-a-date',
+            ])
+            ->assertSessionHasErrors(['birth_date']);
+    }
+
+    /**
+     * Валидация before_or_equal:today: будущая дата рождения (завтра и далее) отклоняется.
+     */
+    public function test_store_validates_birth_date_must_not_be_in_future(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+
+        $this->actingAs($admin)
+            ->post(route('contact-people.store', $contractor), [
+                'fio' => 'Фёдоров Фёдор',
+                'birth_date' => now()->addDay()->format('Y-m-d'),
+            ])
+            ->assertSessionHasErrors(['birth_date' => 'Дата рождения не может быть в будущем.']);
+    }
+
+    /**
+     * Инвариант ТЗ: сегодняшняя дата рождения разрешена правилом before_or_equal:today.
+     */
+    public function test_admin_can_store_contact_person_with_birth_date_today(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $birthDate = now()->format('Y-m-d');
+
+        $this->actingAs($admin)
+            ->post(route('contact-people.store', $contractor), [
+                'fio' => 'Сегодняшний Сегодням',
+                'birth_date' => $birthDate,
+            ])
+            ->assertRedirect(route('contractors.show', $contractor));
+
+        $person = ContactPerson::where('fio', 'Сегодняшний Сегодням')->first();
+        $this->assertNotNull($person);
+        $this->assertSame($birthDate, $person->birth_date->format('Y-m-d'));
+    }
+
+    /**
+     * Обновление сохраняет новое значение birth_date (правило before:today пропускает прошедшую дату).
+     */
+    public function test_manager_can_update_contact_person_birth_date(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $person = $this->personAttachedTo(Contractor::factory()->for($manager, 'user')->create());
+        $birthDate = now()->subYears(25)->format('Y-m-d');
+
+        $this->actingAs($manager)
+            ->put(route('contact-people.update', $person), [
+                'fio' => $person->fio,
+                'birth_date' => $birthDate,
+            ])
+            ->assertRedirect(route('contact-people.show', $person));
+
+        $this->assertSame($birthDate, $person->fresh()->birth_date->format('Y-m-d'));
+    }
+
+    /**
+     * Валидация update: birth_date должна быть корректной датой (правило идентично create).
+     */
+    public function test_update_validates_birth_date_must_be_date(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $person = $this->personAttachedTo(Contractor::factory()->for($manager, 'user')->create());
+
+        $this->actingAs($manager)
+            ->put(route('contact-people.update', $person), [
+                'fio' => $person->fio,
+                'birth_date' => 'not-a-date',
+            ])
+            ->assertSessionHasErrors(['birth_date']);
+    }
+
+    /**
+     * Валидация update: будущая дата рождения отклоняется (before_or_equal:today).
+     */
+    public function test_update_validates_birth_date_must_not_be_in_future(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $person = $this->personAttachedTo(Contractor::factory()->for($manager, 'user')->create());
+
+        $this->actingAs($manager)
+            ->put(route('contact-people.update', $person), [
+                'fio' => $person->fio,
+                'birth_date' => now()->addDay()->format('Y-m-d'),
+            ])
+            ->assertSessionHasErrors(['birth_date' => 'Дата рождения не может быть в будущем.']);
+    }
+
+    /**
+     * Карточка contact-people.show отображает birth_date в формате d.m.Y.
+     */
+    public function test_show_displays_birth_date_formatted(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $person = $this->personAttachedTo(Contractor::factory()->for($manager, 'user')->create());
+        $person->update(['birth_date' => now()->subYears(30)]);
+
+        $this->actingAs($manager)
+            ->get(route('contact-people.show', $person))
+            ->assertOk()
+            ->assertSee($person->fresh()->birth_date->format('d.m.Y'));
+    }
+
+    /**
+     * Карточка show рендерится без 500 и показывает «—» для NULL birth_date
+     * (защита регресса: каст 'date' в модели + null-safe ->format() в view).
+     */
+    public function test_show_displays_dash_when_birth_date_is_null(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $person = $this->personAttachedTo(Contractor::factory()->for($manager, 'user')->create());
+        $person->update(['birth_date' => null]);
+
+        $this->actingAs($manager)
+            ->get(route('contact-people.show', $person->fresh()))
+            ->assertOk()
+            ->assertSee('—');
+    }
 }

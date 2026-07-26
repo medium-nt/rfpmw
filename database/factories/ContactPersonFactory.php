@@ -22,6 +22,7 @@ class ContactPersonFactory extends Factory
             'phone' => fake()->optional()->phoneNumber(),
             'email' => fake()->optional()->safeEmail(),
             'interests' => fake()->optional()->sentence(),
+            'birth_date' => fake()->optional()->date('Y-m-d', '-1 year'),
         ];
     }
 }

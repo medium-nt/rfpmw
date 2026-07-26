@@ -9,11 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['fio', 'phone', 'email', 'interests'])]
+#[Fillable(['fio', 'phone', 'email', 'interests', 'birth_date'])]
 class ContactPerson extends Model
 {
     /** @use HasFactory<ContactPersonFactory> */
     use HasFactory, SoftDeletes;
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return ['birth_date' => 'date'];
+    }
 
     /**
      * Места работы человека (связки человек ↔ компания).
