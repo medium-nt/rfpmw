@@ -140,6 +140,7 @@ class ContactPersonController extends Controller
                 'phone' => $data['phone'] ?? null,
                 'email' => $data['email'] ?? null,
                 'interests' => $data['interests'] ?? null,
+                'birth_date' => $data['birth_date'] ?? null,
             ]);
 
             EmployedPerson::create([

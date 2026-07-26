@@ -30,6 +30,7 @@ class CreateNewContactPersonRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
             'interests' => ['nullable', 'string', 'max:1000'],
+            'birth_date' => ['nullable', 'date', 'before_or_equal:today'],
             'position' => ['nullable', 'string', 'max:255'],
         ];
     }
