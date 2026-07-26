@@ -26,7 +26,7 @@
                 <dt class="col-5 col-sm-3 col-md-2">Email</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $person->email ?? '—' }}</dd>
 
-                <dt class="col-5 col-sm-3 col-md-2">Интересы</dt>
+                <dt class="col-5 col-sm-3 col-md-2">Доп.информация</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $person->interests ?? '—' }}</dd>
             </dl>
             </div>

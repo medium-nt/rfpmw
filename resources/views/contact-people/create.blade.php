@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="interests">Интересы</label>
+                    <label for="interests">Доп.информация</label>
                     <textarea id="interests" name="interests"
                         class="form-control @error('interests') is-invalid @enderror"
                         rows="3">{{ old('interests') }}</textarea>
