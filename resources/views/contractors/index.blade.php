@@ -58,14 +58,7 @@
                                     —
                                 @endif
                             </td>
-                            <td>
-                                @if ($contractor->actual_address)
-                                    <span class="d-lg-none" title="{{ $contractor->actual_address }}">{{ \Illuminate\Support\Str::limit($contractor->actual_address, 20) }}</span>
-                                    <span class="d-none d-lg-inline" title="{{ $contractor->actual_address }}">{{ \Illuminate\Support\Str::limit($contractor->actual_address, 30) }}</span>
-                                @else
-                                    —
-                                @endif
-                            </td>
+                            <td><x-expandable-text :value="$contractor->actual_address" /></td>
                             <td class="d-none d-lg-table-cell">
                                 @if ($contractor->website)
                                     <a href="{{ $contractor->website }}" target="_blank" title="{{ $contractor->website }}">{{ \Illuminate\Support\Str::limit($contractor->website, 35) }}</a>

@@ -30,7 +30,7 @@
                 <dd class="col-7 col-sm-9 col-md-10">{{ $person->birth_date?->format('d.m.Y') ?? '—' }}</dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Доп.информация</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ $person->interests ?? '—' }}</dd>
+                <dd class="col-7 col-sm-9 col-md-10"><x-expandable-text :value="$person->interests" /></dd>
             </dl>
             </div>
         </div>

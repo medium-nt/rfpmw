@@ -129,7 +129,7 @@
             </div>
 
             @if ($proposal->comment)
-                <div class="mt-3" style="white-space: pre-wrap; word-break: break-word; text-indent: 0; margin: 0; padding: 0;">{{ $proposal->comment }}</div>
+                <div class="mt-3"><x-expandable-text :value="$proposal->comment" /></div>
             @endif
 
             <hr>

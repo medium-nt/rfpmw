@@ -88,7 +88,7 @@
                                     <span class="text-muted">—</span>
                                 @endforelse
                             </td>
-                            <td title="{{ $request->comment }}">{{ $request->comment ? \Illuminate\Support\Str::limit($request->comment, 30) : '—' }}</td>
+                            <td><x-expandable-text :value="$request->comment" /></td>
                             <td class="text-right">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
                         </tr>
