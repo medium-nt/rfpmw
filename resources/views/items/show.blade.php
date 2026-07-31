@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <th>Описание</th>
-                            <td>{{ $item->description ?? '—' }}</td>
+                            <td><x-expandable-text :value="$item->description" /></td>
                         </tr>
                         <tr>
                             <th>Создан</th>

@@ -68,8 +68,8 @@
                                 <a href="{{ route('contractors.show', $event->employedPerson->contractor) }}" title="{{ $event->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contractor?->name ?? '—', 20) }}</a>
                             </td>
                             <td title="{{ $event->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($event->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
-                            <td title="{{ $event->description ?? '' }}">
-                                <div style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line;">{{ $event->description ?? '—' }}</div>
+                            <td>
+                                <x-expandable-text :value="$event->description" />
                             </td>
                         </tr>
                     @empty

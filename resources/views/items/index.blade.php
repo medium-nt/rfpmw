@@ -50,7 +50,7 @@
                         <tr>
                             <td><a href="{{ route('items.show', $item) }}">{{ $item->sku }}</a></td>
                             <td title="{{ $item->vendor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($item->vendor?->name ?? '—', 20) }}</td>
-                            <td title="{{ $item->description ?? '' }}">{{ \Illuminate\Support\Str::limit($item->description ?? '—', 20) }}</td>
+                            <td><x-expandable-text :value="$item->description" /></td>
                         </tr>
                     @endforeach
                 </tbody>

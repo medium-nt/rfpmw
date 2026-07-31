@@ -63,9 +63,15 @@
                 width: 100%;
             }
         }
+
+        /* Разворачиваемый многострочный текст (x-expandable-text):
+           pre-line сохраняет переносы строк из textarea. */
+        .expandable-text__preview { white-space: pre-line; }
+        .expandable-text__toggle { white-space: nowrap; cursor: pointer; margin-left: .25rem; }
     </style>
 @endpush
 
 @push('js')
     @include('partials.toasts')
+    <script src="{{ asset('js/expandable-text.js') }}"></script>
 @endpush

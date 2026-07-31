@@ -33,10 +33,10 @@
                 </dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Юр. адрес</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ $contractor->legal_address ?? '—' }}</dd>
+                <dd class="col-7 col-sm-9 col-md-10"><x-expandable-text :value="$contractor->legal_address" /></dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Факт. адрес</dt>
-                <dd class="col-7 col-sm-9 col-md-10">{{ $contractor->actual_address ?? '—' }}</dd>
+                <dd class="col-7 col-sm-9 col-md-10"><x-expandable-text :value="$contractor->actual_address" /></dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Телефон</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $contractor->phone ?? '—' }}</dd>
@@ -95,7 +95,7 @@
                                 <a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a>
                             </td>
                             <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
-                            <td title="{{ $event->description }}">{{ $event->description ? \Illuminate\Support\Str::limit($event->description, 30) : '—' }}</td>
+                            <td><x-expandable-text :value="$event->description" /></td>
                         </tr>
                     @empty
                         <tr>
@@ -296,7 +296,7 @@
                                     <span class="text-muted">—</span>
                                 @endforelse
                             </td>
-                            <td title="{{ $request->comment }}">{{ $request->comment ? \Illuminate\Support\Str::limit($request->comment, 30) : '—' }}</td>
+                            <td><x-expandable-text :value="$request->comment" /></td>
                             <td class="text-right">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
                         </tr>
@@ -358,7 +358,7 @@
                                     <span class="text-muted">—</span>
                                 @endforelse
                             </td>
-                            <td title="{{ $proposal->comment }}">{{ $proposal->comment ? \Illuminate\Support\Str::limit($proposal->comment, 30) : '—' }}</td>
+                            <td><x-expandable-text :value="$proposal->comment" /></td>
                             <td class="text-right">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
                         </tr>

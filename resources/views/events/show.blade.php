@@ -46,7 +46,7 @@
                 <dd class="col-7 col-sm-9 col-md-10 text-multiline">{{ $event->subject ?? '—' }}</dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Описание</dt>
-                <dd class="col-7 col-sm-9 col-md-10 text-multiline">{{ $event->description ?? '—' }}</dd>
+                <dd class="col-7 col-sm-9 col-md-10 text-multiline"><x-expandable-text :value="$event->description" /></dd>
 
                 <dt class="col-5 col-sm-3 col-md-2">Менеджер</dt>
                 <dd class="col-7 col-sm-9 col-md-10">{{ $event->user?->name ?? '—' }}</dd>
