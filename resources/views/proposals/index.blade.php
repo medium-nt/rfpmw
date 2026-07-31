@@ -49,13 +49,13 @@
                         <th>
                             <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th class="d-none d-sm-table-cell">Сотрудник</th>
                         <th>
                             <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Статус</th>
-                        <th class="d-none d-sm-table-cell">Менеджер</th>
+                        <th>Артикулы</th>
+                        <th>Комментарии</th>
                         <th>Сумма, USD</th>
+                        <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +64,6 @@
                             <td>
                                 <a href="{{ route('proposals.show', $proposal) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td class="d-none d-sm-table-cell" title="{{ $proposal->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
                                 @if ($proposal->employedPerson?->contractor)
                                     <a href="{{ route('contractors.show', $proposal->employedPerson->contractor) }}" title="{{ $proposal->employedPerson->contractor->name }}">{{ \Illuminate\Support\Str::limit($proposal->employedPerson->contractor->name, 20) }}</a>
@@ -72,9 +71,26 @@
                                     —
                                 @endif
                             </td>
-                            <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
-                            <td class="d-none d-sm-table-cell" title="{{ $proposal->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($proposal->user?->name ?? '—', 20) }}</td>
+                            <td>
+                                @forelse ($proposal->proposalItems as $proposalItem)
+                                    @if ($proposalItem->item)
+                                        @if ($proposalItem->item->trashed())
+                                            <span class="text-muted">{{ $proposalItem->item->sku }}</span>
+                                            <span class="badge badge-secondary">удалён</span>
+                                        @else
+                                            <a href="{{ route('items.show', [$proposalItem->item, 'from' => '/' . request()->path()]) }}">{{ $proposalItem->item->sku }}</a>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                    @unless ($loop->last)<br>@endunless
+                                @empty
+                                    <span class="text-muted">—</span>
+                                @endforelse
+                            </td>
+                            <td title="{{ $proposal->comment }}">{{ $proposal->comment ? \Illuminate\Support\Str::limit($proposal->comment, 30) : '—' }}</td>
                             <td class="text-right">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</td>
+                            <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>

@@ -80,9 +80,9 @@
                 <thead>
                     <tr>
                         <th>Дата</th>
-                        <th>Тип</th>
+                        <th>Контрагент</th>
                         <th>Сотрудник</th>
-                        <th>Тема</th>
+                        <th>Результат</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -91,9 +91,11 @@
                             <td>
                                 <a href="{{ route('events.show', [$event, 'from' => '/' . request()->path()]) }}">{{ $event->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ \App\Models\Event::getEventTypes()[$event->event_type] ?? $event->event_type }}</td>
+                            <td>
+                                <a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a>
+                            </td>
                             <td>{{ $event->employedPerson?->contactPerson?->fio ?? '—' }}</td>
-                            <td>{{ $event->subject ?? '—' }}</td>
+                            <td title="{{ $event->description }}">{{ $event->description ? \Illuminate\Support\Str::limit($event->description, 30) : '—' }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -219,9 +221,9 @@
                 <thead>
                     <tr>
                         <th>Название</th>
-                        <th>Дата</th>
+                        <th>Контрагент</th>
+                        <th>Сумма</th>
                         <th>Статус</th>
-                        <th>Ответственный</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -230,9 +232,11 @@
                             <td>
                                 <a href="{{ route('projects.show', [$project, 'from' => '/' . request()->path()]) }}">{{ $project->name }}</a>
                             </td>
-                            <td>{{ $project->date?->format('d.m.Y') ?? '—' }}</td>
+                            <td>
+                                <a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a>
+                            </td>
+                            <td class="text-right">{{ number_format((float) $project->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Project::getStatuses()[$project->status] ?? $project->status ?? '—' }}</td>
-                            <td>{{ $project->responsiblePerson?->contactPerson?->fio ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
@@ -259,9 +263,11 @@
                 <thead>
                     <tr>
                         <th>Дата</th>
-                        <th>Сотрудник</th>
+                        <th>Контрагент</th>
+                        <th>Артикулы</th>
+                        <th>Комментарии</th>
+                        <th>Сумма, USD</th>
                         <th>Статус</th>
-                        <th>Менеджер</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -270,13 +276,33 @@
                             <td>
                                 <a href="{{ route('requests.show', [$request, 'from' => '/' . request()->path()]) }}">{{ $request->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $request->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td>
+                                <a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a>
+                            </td>
+                            <td>
+                                @forelse ($request->requestItems as $requestItem)
+                                    @if ($requestItem->item)
+                                        @if ($requestItem->item->trashed())
+                                            <span class="text-muted">{{ $requestItem->item->sku }}</span>
+                                            <span class="badge badge-secondary">удалён</span>
+                                        @else
+                                            <a href="{{ route('items.show', [$requestItem->item, 'from' => '/' . request()->path()]) }}">{{ $requestItem->item->sku }}</a>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                    @unless ($loop->last)<br>@endunless
+                                @empty
+                                    <span class="text-muted">—</span>
+                                @endforelse
+                            </td>
+                            <td title="{{ $request->comment }}">{{ $request->comment ? \Illuminate\Support\Str::limit($request->comment, 30) : '—' }}</td>
+                            <td class="text-right">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
-                            <td>{{ $request->user?->name ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-3">Запросы отсутствуют.</td>
+                            <td colspan="6" class="text-center text-muted py-3">Запросы отсутствуют.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -299,9 +325,11 @@
                 <thead>
                     <tr>
                         <th>Дата</th>
-                        <th>Сотрудник</th>
+                        <th>Контрагент</th>
+                        <th>Артикулы</th>
+                        <th>Комментарии</th>
+                        <th>Сумма, USD</th>
                         <th>Статус</th>
-                        <th>Менеджер</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -310,13 +338,33 @@
                             <td>
                                 <a href="{{ route('proposals.show', [$proposal, 'from' => '/' . request()->path()]) }}">{{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td>{{ $proposal->employedPerson?->contactPerson?->fio ?? '—' }}</td>
+                            <td>
+                                <a href="{{ route('contractors.show', $contractor) }}" title="{{ $contractor->name }}">{{ \Illuminate\Support\Str::limit($contractor->name, 20) }}</a>
+                            </td>
+                            <td>
+                                @forelse ($proposal->proposalItems as $proposalItem)
+                                    @if ($proposalItem->item)
+                                        @if ($proposalItem->item->trashed())
+                                            <span class="text-muted">{{ $proposalItem->item->sku }}</span>
+                                            <span class="badge badge-secondary">удалён</span>
+                                        @else
+                                            <a href="{{ route('items.show', [$proposalItem->item, 'from' => '/' . request()->path()]) }}">{{ $proposalItem->item->sku }}</a>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                    @unless ($loop->last)<br>@endunless
+                                @empty
+                                    <span class="text-muted">—</span>
+                                @endforelse
+                            </td>
+                            <td title="{{ $proposal->comment }}">{{ $proposal->comment ? \Illuminate\Support\Str::limit($proposal->comment, 30) : '—' }}</td>
+                            <td class="text-right">{{ number_format((float) $proposal->usd_value, 2, '.', ' ') }}</td>
                             <td>{{ \App\Models\Proposal::getStatuses()[$proposal->status] ?? $proposal->status ?? '—' }}</td>
-                            <td>{{ $proposal->user?->name ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-3">КП отсутствуют.</td>
+                            <td colspan="6" class="text-center text-muted py-3">КП отсутствуют.</td>
                         </tr>
                     @endforelse
                 </tbody>

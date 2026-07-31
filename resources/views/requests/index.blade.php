@@ -49,13 +49,13 @@
                         <th>
                             <x-sort-link field="date" title="Дата" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th class="d-none d-sm-table-cell">Сотрудник</th>
                         <th>
                             <x-sort-link field="contractor" title="Контрагент" :current-field="$sortField" :current-direction="$sortDirection" />
                         </th>
-                        <th>Статус</th>
-                        <th class="d-none d-sm-table-cell">Менеджер</th>
+                        <th>Артикулы</th>
+                        <th>Комментарии</th>
                         <th>Сумма, USD</th>
+                        <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,13 +64,33 @@
                             <td>
                                 <a href="{{ route('requests.show', $request) }}">{{ $request->date?->format('d.m.Y') ?? '—' }}</a>
                             </td>
-                            <td class="d-none d-sm-table-cell" title="{{ $request->employedPerson?->contactPerson?->fio ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contactPerson?->fio ?? '—', 20) }}</td>
                             <td>
-                                <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}" title="{{ $request->employedPerson?->contractor?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->employedPerson?->contractor?->name ?? '—', 20) }}</a>
+                                @if ($request->employedPerson?->contractor)
+                                    <a href="{{ route('contractors.show', $request->employedPerson->contractor) }}" title="{{ $request->employedPerson->contractor->name }}">{{ \Illuminate\Support\Str::limit($request->employedPerson->contractor->name, 20) }}</a>
+                                @else
+                                    —
+                                @endif
                             </td>
-                            <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
-                            <td class="d-none d-sm-table-cell" title="{{ $request->user?->name ?? '' }}">{{ \Illuminate\Support\Str::limit($request->user?->name ?? '—', 20) }}</td>
+                            <td>
+                                @forelse ($request->requestItems as $requestItem)
+                                    @if ($requestItem->item)
+                                        @if ($requestItem->item->trashed())
+                                            <span class="text-muted">{{ $requestItem->item->sku }}</span>
+                                            <span class="badge badge-secondary">удалён</span>
+                                        @else
+                                            <a href="{{ route('items.show', [$requestItem->item, 'from' => '/' . request()->path()]) }}">{{ $requestItem->item->sku }}</a>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                    @unless ($loop->last)<br>@endunless
+                                @empty
+                                    <span class="text-muted">—</span>
+                                @endforelse
+                            </td>
+                            <td title="{{ $request->comment }}">{{ $request->comment ? \Illuminate\Support\Str::limit($request->comment, 30) : '—' }}</td>
                             <td class="text-right">{{ number_format((float) $request->usd_value, 2, '.', ' ') }}</td>
+                            <td>{{ \App\Models\Request::getStatuses()[$request->status] ?? $request->status ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>

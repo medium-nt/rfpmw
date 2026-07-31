@@ -117,48 +117,65 @@ class ItemManagementTest extends TestCase
     }
 
     /**
-     * Менеджер не имеет доступа к индексу артикулов (403).
+     * Менеджер видит список артикулов (общий справочник).
      */
-    public function test_manager_cannot_index_items(): void
+    public function test_manager_can_index_items(): void
     {
         $manager = User::factory()->manager()->create();
+        $item = Item::factory()->create(['sku' => 'MGR-IDX-001']);
 
-        $this->actingAs($manager)->get(route('items.index'))->assertForbidden();
+        $this->actingAs($manager)->get(route('items.index'))
+            ->assertOk()
+            ->assertSee($item->sku);
     }
 
     /**
-     * Менеджер не имеет доступа к форме создания (403).
+     * Менеджер видит форму создания артикула.
      */
-    public function test_manager_cannot_create_item(): void
+    public function test_manager_can_view_create_form(): void
     {
         $manager = User::factory()->manager()->create();
 
-        $this->actingAs($manager)->get(route('items.create'))->assertForbidden();
+        $this->actingAs($manager)->get(route('items.create'))->assertOk();
     }
 
     /**
-     * Менеджер не может создать артикул (403).
+     * Менеджер создаёт артикул с валидными данными.
      */
-    public function test_manager_cannot_store_item(): void
+    public function test_manager_can_store_item(): void
     {
         $manager = User::factory()->manager()->create();
         $vendor = Contractor::factory()->vendor()->create();
 
-        $this->actingAs($manager)->post(route('items.store'), [
-            'sku' => 'HACK-SKU',
+        $response = $this->actingAs($manager)->post(route('items.store'), [
+            'sku' => 'MGR-STORE-001',
             'vendor_id' => $vendor->id,
-        ])->assertForbidden();
+            'description' => 'Артикул, созданный менеджером',
+        ]);
+
+        $item = Item::where('sku', 'MGR-STORE-001')->first();
+        $this->assertNotNull($item);
+
+        $response->assertRedirect(route('items.show', $item));
+        $this->assertDatabaseHas('items', [
+            'sku' => 'MGR-STORE-001',
+            'vendor_id' => $vendor->id,
+            'description' => 'Артикул, созданный менеджером',
+        ]);
     }
 
     /**
-     * Менеджер не имеет доступа к карточке артикула (403).
+     * Менеджер видит карточку артикула (общий справочник).
      */
-    public function test_manager_cannot_show_item(): void
+    public function test_manager_can_show_item(): void
     {
         $manager = User::factory()->manager()->create();
-        $item = Item::factory()->create();
+        $item = Item::factory()->create(['sku' => 'MGR-SHOW-001']);
 
-        $this->actingAs($manager)->get(route('items.show', $item))->assertForbidden();
+        $this->actingAs($manager)->get(route('items.show', $item))
+            ->assertOk()
+            ->assertSee($item->sku)
+            ->assertSee($item->vendor->name);
     }
 
     /**
