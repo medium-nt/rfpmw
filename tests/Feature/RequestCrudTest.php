@@ -230,13 +230,13 @@ class RequestCrudTest extends TestCase
     }
 
     /**
-     * Создаёт контрагента для пользователя и запрос от его сотрудника с помеченным ФИО (для проверок scoping).
+     * Создаёт контрагента для пользователя и запрос от его сотрудника с помеченным именем контрагента (маркер для scoping-проверок в index).
      */
-    private function makeRequestWith(User $user, string $fio): void
+    private function makeRequestWith(User $user, string $contractorName): void
     {
-        $contractor = Contractor::factory()->for($user, 'user')->create();
+        $contractor = Contractor::factory()->for($user, 'user')->create(['name' => $contractorName]);
         $employed = EmployedPerson::factory()->create([
-            'contact_person_id' => ContactPerson::factory()->create(['fio' => $fio])->id,
+            'contact_person_id' => ContactPerson::factory()->create()->id,
             'contractor_id' => $contractor->id,
         ]);
 

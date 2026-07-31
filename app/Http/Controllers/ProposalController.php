@@ -31,7 +31,7 @@ class ProposalController extends Controller
         }
 
         $proposals = Proposal::query()
-            ->with(['employedPerson.contactPerson', 'employedPerson.contractor', 'user'])
+            ->with(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'proposalItems.item.vendor'])
             ->whereHas('employedPerson.contractor', fn ($q) => $q->whereNull('contractors.deleted_at'))
             ->when(auth()->user()->isManager(), function ($q): void {
                 $q->whereHas('employedPerson.contractor', fn ($qq) => $qq->where('user_id', auth()->id()));

@@ -176,28 +176,27 @@ class ContractorController extends Controller
             ->get();
 
         $projects = $contractor->projects()
-            ->with('responsiblePerson.contactPerson')
             ->orderByDesc('date')
             ->paginate(self::PER_PAGE, ['*'], 'page_projects')
             ->appends(request()->except('page_projects'));
 
         $requests = Request::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
-            ->with(['employedPerson.contactPerson', 'user'])
+            ->with(['requestItems.item'])
             ->orderByDesc('date')
             ->paginate(self::PER_PAGE, ['*'], 'page_requests')
             ->appends(request()->except('page_requests'));
 
         $proposals = Proposal::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
-            ->with(['employedPerson.contactPerson', 'user'])
+            ->with(['proposalItems.item'])
             ->orderByDesc('date')
             ->paginate(self::PER_PAGE, ['*'], 'page_proposals')
             ->appends(request()->except('page_proposals'));
 
         $events = Event::query()
             ->whereHas('employedPerson', fn ($q) => $q->where('contractor_id', $contractor->id))
-            ->with(['employedPerson.contactPerson', 'user'])
+            ->with(['employedPerson.contactPerson'])
             ->orderByDesc('date')
             ->paginate(self::PER_PAGE, ['*'], 'page_events')
             ->appends(request()->except('page_events'));
