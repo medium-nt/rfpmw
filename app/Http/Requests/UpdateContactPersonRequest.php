@@ -27,7 +27,7 @@ class UpdateContactPersonRequest extends FormRequest
     {
         return [
             'fio' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:255'],
             'interests' => ['nullable', 'string', 'max:1000'],
             'birth_date' => ['nullable', 'date', 'before_or_equal:today'],
