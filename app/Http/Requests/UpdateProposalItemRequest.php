@@ -28,6 +28,7 @@ class UpdateProposalItemRequest extends FormRequest
         return [
             'quantity' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0'],
+            'delivery_term' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

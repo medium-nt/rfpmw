@@ -71,6 +71,7 @@
                             <th class="text-right">Кол-во</th>
                             <th class="text-right">Цена, USD</th>
                             <th class="text-right">Сумма, USD</th>
+                            <th>Срок поставки</th>
                             <th class="text-right" style="width: 1%;">&nbsp;</th>
                         </tr>
                     </thead>
@@ -94,6 +95,7 @@
                                 <td class="text-right">{{ $proposalItem->quantity ?? '—' }}</td>
                                 <td class="text-right">{{ number_format((float) $proposalItem->price, 2, '.', ' ') }}</td>
                                 <td class="text-right">{{ number_format(((float) $proposalItem->price) * ((int) $proposalItem->quantity), 2, '.', ' ') }}</td>
+                                <td>{{ $proposalItem->delivery_term ?? '—' }}</td>
                                 <td class="text-right">
                                     <a href="{{ route('proposal-items.edit', [$proposal, $proposalItem]) }}" class="btn btn-warning btn-sm" title="Изменить" data-toggle="tooltip">
                                         <i class="fas fa-edit"></i>
@@ -109,7 +111,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-3">Позиции отсутствуют.</td>
+                                <td colspan="8" class="text-center text-muted py-3">Позиции отсутствуют.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -121,6 +123,7 @@
                             <tr class="font-weight-bold">
                                 <td colspan="5" class="text-right">Итого, USD</td>
                                 <td class="text-right">{{ number_format((float) $total, 2, '.', ' ') }}</td>
+                                <td></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -138,7 +141,7 @@
             <form method="POST" action="{{ route('proposal-items.store', $proposal) }}">
                 @csrf
                 <div class="form-row align-items-end">
-                    <div class="form-group col-12 col-md-6">
+                    <div class="form-group col-12 col-md-4">
                         <label for="item_id">Артикул</label>
                         <select id="item_id" name="item_id" class="form-control @error('item_id') is-invalid @enderror" required>
                             <option value="">— Выберите артикул —</option>
@@ -152,7 +155,7 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="form-group col-6 col-md-3">
+                    <div class="form-group col-6 col-md-2">
                         <label for="quantity">Количество</label>
                         <input type="number" id="quantity" name="quantity" min="1"
                             class="form-control @error('quantity') is-invalid @enderror"
@@ -167,6 +170,16 @@
                             class="form-control @error('price') is-invalid @enderror"
                             value="{{ old('price') }}">
                         @error('price')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-6 col-md-3">
+                        <label for="delivery_term">Срок поставки</label>
+                        <input type="text" id="delivery_term" name="delivery_term" maxlength="255"
+                            class="form-control @error('delivery_term') is-invalid @enderror"
+                            value="{{ old('delivery_term') }}"
+                            placeholder="например, 2 недели">
+                        @error('delivery_term')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
