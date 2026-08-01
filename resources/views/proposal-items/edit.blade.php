@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-12 col-md-6">
+                    <div class="form-group col-12 col-md-4">
                         <label for="quantity">Количество</label>
                         <input type="number" id="quantity" name="quantity" min="1"
                             class="form-control @error('quantity') is-invalid @enderror"
@@ -47,12 +47,23 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-12 col-md-6">
+                    <div class="form-group col-12 col-md-4">
                         <label for="price">Цена, USD</label>
                         <input type="number" id="price" name="price" min="0" step="0.01"
                             class="form-control @error('price') is-invalid @enderror"
                             value="{{ old('price', $proposalItem->price) }}" required>
                         @error('price')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group col-12 col-md-4">
+                        <label for="delivery_term">Срок поставки</label>
+                        <input type="text" id="delivery_term" name="delivery_term" maxlength="255"
+                            class="form-control @error('delivery_term') is-invalid @enderror"
+                            value="{{ old('delivery_term', $proposalItem->delivery_term) }}"
+                            placeholder="например, 2 недели">
+                        @error('delivery_term')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

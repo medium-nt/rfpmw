@@ -189,6 +189,7 @@ return [
         'dates' => 'даты',
         'day' => 'день',
         'deleted_at' => 'удалено в',
+        'delivery_term' => 'срок поставки',
         'description' => 'описание',
         'display_type' => 'тип отображения',
         'district' => 'округ',

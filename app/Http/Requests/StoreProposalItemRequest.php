@@ -31,6 +31,7 @@ class StoreProposalItemRequest extends FormRequest
             'item_id' => ['required', Rule::exists(Item::class, 'id')->whereNull('deleted_at')],
             'quantity' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0'],
+            'delivery_term' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

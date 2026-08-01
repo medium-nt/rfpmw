@@ -24,6 +24,7 @@ class ProposalItemFactory extends Factory
             'item_id' => Item::factory(),
             'quantity' => fake()->numberBetween(1, 1000),
             'price' => fake()->randomFloat(2, 0, 1000),
+            'delivery_term' => fake()->optional()->words(fake()->numberBetween(2, 4), true),
         ];
     }
 }

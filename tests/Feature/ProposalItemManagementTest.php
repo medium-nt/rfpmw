@@ -39,6 +39,7 @@ class ProposalItemManagementTest extends TestCase
                 'item_id' => $item->id,
                 'quantity' => 10,
                 'price' => 150.50,
+                'delivery_term' => '2 недели',
             ])
             ->assertRedirect(route('proposals.show', $proposal));
 
@@ -46,6 +47,7 @@ class ProposalItemManagementTest extends TestCase
         $this->assertNotNull($proposalItem);
         $this->assertSame(10, $proposalItem->quantity);
         $this->assertSame(150.50, (float) $proposalItem->price);
+        $this->assertSame('2 недели', $proposalItem->delivery_term);
 
         // Проверка пересчёта usd_value КП
         $proposal->refresh();
@@ -71,6 +73,7 @@ class ProposalItemManagementTest extends TestCase
                 'item_id' => $anotherItem->id, // Попытка сменить артикул (игнорируется)
                 'quantity' => 20,
                 'price' => 200.75,
+                'delivery_term' => '30 дней',
             ])
             ->assertRedirect(route('proposals.show', $proposal));
 
@@ -79,6 +82,7 @@ class ProposalItemManagementTest extends TestCase
         $this->assertSame($originalItemId, $proposalItem->item_id);
         $this->assertSame(20, $proposalItem->quantity);
         $this->assertSame(200.75, (float) $proposalItem->price);
+        $this->assertSame('30 дней', $proposalItem->delivery_term);
 
         // Проверка пересчёта usd_value КП
         $proposal->refresh();
@@ -189,6 +193,50 @@ class ProposalItemManagementTest extends TestCase
                 // price не передаётся — должно FAILED валидацию
             ])
             ->assertSessionHasErrors(['price']);
+    }
+
+    /**
+     * Валидация: delivery_term не может превышать 255 символов.
+     */
+    public function test_delivery_term_is_validated_on_store(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $proposal = $this->proposalFor(Contractor::factory()->for($admin, 'user')->create());
+        $item = Item::factory()->create();
+
+        $this->actingAs($admin)
+            ->post(route('proposal-items.store', $proposal), [
+                'item_id' => $item->id,
+                'quantity' => 10,
+                'price' => 100.00,
+                'delivery_term' => str_repeat('а', 256), // 256 символов — превышает лимит
+            ])
+            ->assertSessionHasErrors(['delivery_term']);
+    }
+
+    /**
+     * Валидация: delivery_term может быть null (опциональное поле).
+     */
+    public function test_delivery_term_is_nullable_on_store(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $proposal = $this->proposalFor(Contractor::factory()->for($admin, 'user')->create());
+        $item = Item::factory()->create();
+
+        $this->actingAs($admin)
+            ->post(route('proposal-items.store', $proposal), [
+                'item_id' => $item->id,
+                'quantity' => 5,
+                'price' => 99.99,
+                // delivery_term не передаётся — должно успешно создать запись
+            ])
+            ->assertRedirect(route('proposals.show', $proposal));
+
+        $this->assertDatabaseHas('proposal_items', [
+            'proposal_id' => $proposal->id,
+            'item_id' => $item->id,
+            'delivery_term' => null,
+        ]);
     }
 
     /**
