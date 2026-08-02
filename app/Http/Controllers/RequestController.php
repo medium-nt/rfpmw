@@ -82,7 +82,7 @@ class RequestController extends Controller
 
         $data = $input->validated();
 
-        Request::create([
+        $requestModel = Request::create([
             'employed_person_id' => $data['employed_person_id'],
             'user_id' => auth()->id(),
             'project_id' => $data['project_id'] ?? null,
@@ -91,7 +91,7 @@ class RequestController extends Controller
         ]);
 
         return redirect()
-            ->route('contractors.show', $contractor)
+            ->route('requests.show', $requestModel)
             ->with('success', 'Запрос успешно создан.');
     }
 

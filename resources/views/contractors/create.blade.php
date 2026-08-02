@@ -48,7 +48,7 @@
                         class="form-control @error('type') is-invalid @enderror" required>
                         <option value="">— Выберите тип —</option>
                         @foreach ($types as $key => $label)
-                            <option value="{{ $key }}" @selected(old('type') == $key)>{{ $label }}</option>
+                            <option value="{{ $key }}" @selected(old('type', request()->query('type')) == $key)>{{ $label }}</option>
                         @endforeach
                     </select>
                     @error('type')

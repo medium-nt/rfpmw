@@ -80,7 +80,7 @@ class ProposalController extends Controller
 
         $data = $request->validated();
 
-        Proposal::create([
+        $proposal = Proposal::create([
             'employed_person_id' => $data['employed_person_id'],
             'user_id' => auth()->id(),
             'project_id' => $data['project_id'] ?? null,
@@ -89,7 +89,7 @@ class ProposalController extends Controller
         ]);
 
         return redirect()
-            ->route('contractors.show', $contractor)
+            ->route('proposals.show', $proposal)
             ->with('success', 'КП успешно создано.');
     }
 

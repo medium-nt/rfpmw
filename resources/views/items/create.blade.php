@@ -22,6 +22,11 @@
             <form method="POST" action="{{ route('items.store') }}">
                 @csrf
 
+                @if ($hasContext)
+                    <input type="hidden" name="from" value="{{ $contextFrom }}">
+                    <input type="hidden" name="parent" value="{{ $contextParent }}">
+                @endif
+
                 <div class="form-group">
                     <label for="sku">SKU (артикул)</label>
                     <input type="text" id="sku" name="sku"
@@ -41,6 +46,15 @@
                             <option value="{{ $id }}" @selected(old('vendor_id') == $id)>{{ $name }}</option>
                         @endforeach
                     </select>
+                    <div class="mt-1">
+                        <a href="{{ route('contractors.create', ['type' => 'vendor']) }}" target="_blank"
+                            class="btn btn-default btn-sm mr-2">
+                            <i class="fas fa-plus"></i> Создать вендора
+                        </a>
+                        <button type="button" class="btn btn-default btn-sm" onclick="location.reload()">
+                            <i class="fas fa-sync"></i> Обновить список
+                        </button>
+                    </div>
                     @error('vendor_id')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
@@ -56,8 +70,10 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a href="{{ route('items.index') }}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ $hasContext ? 'Создать и вернуться' : 'Сохранить' }}
+                </button>
+                <a href="{{ $cancelUrl }}" class="btn btn-secondary">Отмена</a>
             </form>
         </div>
     </div>
