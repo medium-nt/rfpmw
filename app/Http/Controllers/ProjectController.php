@@ -79,7 +79,7 @@ class ProjectController extends Controller
 
         $data = $request->validated();
 
-        Project::create([
+        $project = Project::create([
             'contractor_id' => $contractor->id,
             'name' => $data['name'],
             'date' => $data['date'],
@@ -89,7 +89,7 @@ class ProjectController extends Controller
         ]);
 
         return redirect()
-            ->route('contractors.show', $contractor)
+            ->route('projects.show', $project)
             ->with('success', 'Проект успешно создан.');
     }
 
