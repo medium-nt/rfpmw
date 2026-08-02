@@ -6,8 +6,10 @@ use App\Http\Requests\StoreRequestRequest;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\Contractor;
 use App\Models\Item;
+use App\Models\Proposal;
 use App\Models\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class RequestController extends Controller
@@ -99,7 +101,7 @@ class RequestController extends Controller
 
         abort_if($request->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
-        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'requestItems.item.vendor']);
+        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'requestItems.item.vendor', 'proposals']);
 
         $items = Item::forSelect();
 
@@ -139,11 +141,54 @@ class RequestController extends Controller
     {
         $this->authorizeRequestAccess($request);
 
+        // Отвязываем все КП этого запроса, чтобы не осталось ссылок на удалённый запрос.
+        Proposal::where('request_id', $request->id)->update(['request_id' => null]);
+
         $request->delete();
 
         return redirect()
             ->route('requests.index')
             ->with('success', 'Запрос удалён.');
+    }
+
+    /**
+     * Создание КП из запроса: копирует сотрудника и позиции, дата — сегодня, статус — draft.
+     * Один запрос → не более одного КП (unique на proposals.request_id).
+     */
+    public function createProposal(Request $request): RedirectResponse
+    {
+        $this->authorizeRequestAccess($request);
+
+        abort_if($request->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
+        abort_if($request->proposals()->exists(), 403, 'Из этого запроса уже создано КП.');
+
+        $proposal = DB::transaction(function () use ($request) {
+            $proposal = Proposal::create([
+                'request_id' => $request->id,
+                'employed_person_id' => $request->employed_person_id,
+                'user_id' => auth()->id(),
+                'date' => now()->toDateString(),
+                'status' => 'draft',
+                'comment' => $request->comment,
+            ]);
+
+            // Копируем позиции запроса; price у позиции запроса nullable — падаем в 0 (в КП цена обязательна).
+            foreach ($request->requestItems as $requestItem) {
+                $proposal->proposalItems()->create([
+                    'item_id' => $requestItem->item_id,
+                    'quantity' => $requestItem->quantity,
+                    'price' => (float) $requestItem->price ?: 0,
+                ]);
+            }
+
+            $proposal->recalcUsdValue();
+
+            return $proposal;
+        });
+
+        return redirect()
+            ->route('proposals.show', $proposal)
+            ->with('success', 'КП создано из запроса.');
     }
 
     /**

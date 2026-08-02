@@ -99,7 +99,7 @@ class ProposalController extends Controller
 
         abort_if($proposal->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
-        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'proposalItems.item.vendor']);
+        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'proposalItems.item.vendor', 'request']);
 
         $items = Item::forSelect();
 
@@ -138,6 +138,9 @@ class ProposalController extends Controller
     public function destroy(Proposal $proposal): RedirectResponse
     {
         $this->authorizeProposalAccess($proposal);
+
+        // Отвязываем КП от запроса: освобождаем unique request_id, чтобы из запроса можно было создать новое КП.
+        $proposal->update(['request_id' => null]);
 
         $proposal->delete();
 

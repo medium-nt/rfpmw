@@ -122,6 +122,7 @@ Route::middleware(['auth'])
         Route::post('contractors/{contractor}/requests', [RequestController::class, 'store'])->name('store');
         Route::get('requests', [RequestController::class, 'index'])->name('index');
         Route::get('requests/{request}', [RequestController::class, 'show'])->name('show');
+        Route::post('requests/{request}/create-proposal', [RequestController::class, 'createProposal'])->name('create-proposal');
         Route::get('requests/{request}/edit', [RequestController::class, 'edit'])->name('edit');
         Route::put('requests/{request}', [RequestController::class, 'update'])->name('update');
         Route::delete('requests/{request}', [RequestController::class, 'destroy'])->middleware('can:is-admin')->name('destroy');

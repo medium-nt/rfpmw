@@ -41,6 +41,13 @@
                         —
                     @endif
                 </dd>
+
+                @if ($proposal->request)
+                    <dt class="col-5 col-sm-3 col-md-2">Запрос</dt>
+                    <dd class="col-7 col-sm-9 col-md-10">
+                        <a href="{{ route('requests.show', [$proposal->request, 'from' => '/' . request()->path()]) }}">Запрос от {{ $proposal->request->date?->format('d.m.Y') ?? '—' }}</a>
+                    </dd>
+                @endif
             </dl>
             </div>
         </div>

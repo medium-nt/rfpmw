@@ -60,6 +60,16 @@ class Request extends Model
     }
 
     /**
+     * КП, созданные из этого запроса (не более одного — защищено unique на proposals.request_id).
+     *
+     * @return HasMany<Proposal>
+     */
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    /**
      * Пересчитывает usd_value запроса как Σ(quantity × price) по позициям.
      */
     public function recalcUsdValue(): void
