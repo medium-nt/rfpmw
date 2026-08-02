@@ -37,6 +37,19 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-group col-12 col-md-6">
+                        <label for="project_id">Проект</label>
+                        <select id="project_id" name="project_id"
+                            class="form-control @error('project_id') is-invalid @enderror">
+                            <option value="">— Не выбран —</option>
+                            @foreach ($projects as $id => $label)
+                                <option value="{{ $id }}" @selected(old('project_id', $request->project_id) == $id)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('project_id')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="form-group col-12 col-md-3">
                         <label for="date">Дата <span class="text-danger">*</span></label>
                         <input type="date" id="date" name="date"

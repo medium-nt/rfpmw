@@ -6,6 +6,7 @@ use App\Models\ContactPerson;
 use App\Models\Contractor;
 use App\Models\EmployedPerson;
 use App\Models\Item;
+use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\Request;
 use App\Models\RequestItem;
@@ -88,6 +89,65 @@ class RequestCreateProposalTest extends TestCase
 
         // usd_value = 3 * 10.50 + 2 * 0 = 31.50
         $this->assertSame(31.50, (float) $proposal->fresh()->usd_value);
+    }
+
+    /**
+     * При создании КП из запроса project_id копируется из запроса в КП.
+     */
+    public function test_create_proposal_from_request_copies_project_id(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $contractor = Contractor::factory()->for($manager, 'user')->create();
+        $project = Project::factory()->for($contractor, 'contractor')->create(['name' => 'Проект Альфа']);
+
+        // Создаём запрос с project_id
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $request = Request::factory()->create([
+            'employed_person_id' => $employed->id,
+            'user_id' => $manager->id,
+            'project_id' => $project->id,
+            'date' => '2026-03-01',
+        ]);
+
+        // Создаём КП из запроса
+        $response = $this->actingAs($manager)
+            ->post(route('requests.create-proposal', $request));
+
+        $response->assertRedirect(route('proposals.show', Proposal::latest('id')->first()))
+            ->assertSessionHas('success', 'КП создано из запроса.');
+
+        $proposal = Proposal::where('request_id', $request->id)->first();
+
+        $this->assertNotNull($proposal);
+        $this->assertSame($project->id, $proposal->project_id, 'project_id должен быть скопирован из запроса');
+        $this->assertSame('Проект Альфа', $proposal->project->name);
+    }
+
+    /**
+     * При создании КП из запроса без project_id, КП также создаётся без project_id.
+     */
+    public function test_create_proposal_from_request_without_project_copies_null(): void
+    {
+        $manager = User::factory()->manager()->create();
+        $request = $this->requestFor(Contractor::factory()->for($manager, 'user')->create());
+
+        // Убеждаемся что у запроса нет project_id
+        $this->assertNull($request->project_id);
+
+        $response = $this->actingAs($manager)
+            ->post(route('requests.create-proposal', $request));
+
+        $response->assertRedirect(route('proposals.show', Proposal::latest('id')->first()))
+            ->assertSessionHas('success', 'КП создано из запроса.');
+
+        $proposal = Proposal::where('request_id', $request->id)->first();
+
+        $this->assertNotNull($proposal);
+        $this->assertNull($proposal->project_id, 'project_id должен быть null когда у запроса нет project_id');
     }
 
     /**

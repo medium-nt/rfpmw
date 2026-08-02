@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['employed_person_id', 'user_id', 'request_id', 'date', 'usd_value', 'status', 'comment'])]
+#[Fillable(['employed_person_id', 'user_id', 'request_id', 'project_id', 'date', 'usd_value', 'status', 'comment'])]
 class Proposal extends Model
 {
     /** @use HasFactory<ProposalFactory> */
@@ -47,6 +47,16 @@ class Proposal extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Проект контрагента, к которому относится КП (опционально).
+     *
+     * @return BelongsTo<Project, self>
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 
     /**

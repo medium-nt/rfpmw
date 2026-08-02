@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ContactPerson;
 use App\Models\Contractor;
 use App\Models\EmployedPerson;
+use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
@@ -211,6 +212,205 @@ class ProposalCrudTest extends TestCase
             ->assertRedirect(route('proposals.index'));
 
         $this->assertSoftDeleted('proposals', ['id' => $proposal->id]);
+    }
+
+    /**
+     * Создание КП с project_id проекта того же контрагента успешно сохраняет связь.
+     */
+    public function test_store_proposal_with_same_contractor_project_succeeds(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+        $project = Project::factory()->for($contractor, 'contractor')->create();
+
+        $this->actingAs($admin)
+            ->post(route('proposals.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'project_id' => $project->id,
+                'date' => '2026-04-01',
+                'status' => 'draft',
+            ])
+            ->assertRedirect(route('contractors.show', $contractor));
+
+        $proposal = Proposal::latest('id')->first();
+        $this->assertNotNull($proposal);
+        $this->assertSame($project->id, $proposal->project_id);
+    }
+
+    /**
+     * Создание КП с project_id проекта другого контрагента вызывает ошибку валидации.
+     */
+    public function test_store_proposal_with_other_contractor_project_fails_validation(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $otherContractor = Contractor::factory()->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+        $otherProject = Project::factory()->for($otherContractor, 'contractor')->create();
+
+        $this->actingAs($admin)
+            ->post(route('proposals.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'project_id' => $otherProject->id,
+                'date' => '2026-04-01',
+            ])
+            ->assertSessionHasErrors('project_id');
+
+        $this->assertDatabaseMissing('proposals', ['project_id' => $otherProject->id]);
+    }
+
+    /**
+     * Создание КП без project_id (null) успешно сохраняет КП без привязки к проекту.
+     */
+    public function test_store_proposal_without_project_id_succeeds(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('proposals.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'date' => '2026-04-01',
+                'status' => 'draft',
+            ])
+            ->assertRedirect(route('contractors.show', $contractor));
+
+        $proposal = Proposal::latest('id')->first();
+        $this->assertNotNull($proposal);
+        $this->assertNull($proposal->project_id);
+    }
+
+    /**
+     * Обновление КП позволяет установить project_id проекта того же контрагента.
+     */
+    public function test_update_proposal_can_set_project_id(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $proposal = $this->proposalFor($contractor);
+        $project = Project::factory()->for($contractor, 'contractor')->create();
+
+        $this->actingAs($admin)
+            ->put(route('proposals.update', $proposal), [
+                'employed_person_id' => $proposal->employed_person_id,
+                'project_id' => $project->id,
+                'date' => '2026-04-15',
+                'status' => 'sent',
+            ])
+            ->assertRedirect(route('proposals.show', $proposal));
+
+        $this->assertSame($project->id, $proposal->fresh()->project_id);
+    }
+
+    /**
+     * Обновление КП с project_id чужого проекта вызывает ошибку валидации.
+     */
+    public function test_update_proposal_with_other_contractor_project_fails_validation(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $proposal = $this->proposalFor($contractor);
+        $otherContractor = Contractor::factory()->create();
+        $otherProject = Project::factory()->for($otherContractor, 'contractor')->create();
+
+        $this->actingAs($admin)
+            ->put(route('proposals.update', $proposal), [
+                'employed_person_id' => $proposal->employed_person_id,
+                'project_id' => $otherProject->id,
+                'date' => '2026-04-15',
+            ])
+            ->assertSessionHasErrors('project_id');
+
+        $this->assertDatabaseMissing('proposals', [
+            'id' => $proposal->id,
+            'project_id' => $otherProject->id,
+        ]);
+    }
+
+    /**
+     * Обновление КП позволяет убрать привязку к проекту (project_id = null).
+     */
+    public function test_update_proposal_can_remove_project_id(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $project = Project::factory()->for($contractor, 'contractor')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $proposal = Proposal::factory()->create([
+            'employed_person_id' => $employed->id,
+            'user_id' => $admin->id,
+            'project_id' => $project->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('proposals.update', $proposal), [
+                'employed_person_id' => $proposal->employed_person_id,
+                'project_id' => null,
+                'date' => '2026-04-15',
+                'status' => 'sent',
+            ])
+            ->assertRedirect(route('proposals.show', $proposal));
+
+        $this->assertNull($proposal->fresh()->project_id);
+    }
+
+    /**
+     * Карточка КП eager-loads проект для отображения.
+     */
+    public function test_show_proposal_loads_project_relationship(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $project = Project::factory()->for($contractor, 'contractor')->create(['name' => 'Тестовый Проект']);
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $proposal = Proposal::factory()->create([
+            'employed_person_id' => $employed->id,
+            'user_id' => $admin->id,
+            'project_id' => $project->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('proposals.show', $proposal))
+            ->assertOk()
+            ->assertSee('Тестовый Проект');
+    }
+
+    /**
+     * Мягко-удалённый проект не предлагается в списке формы (SoftDeletes-скоуп Contractor::projects()).
+     */
+    public function test_edit_form_excludes_soft_deleted_project(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        Project::factory()->for($contractor, 'contractor')->create(['name' => 'Живой проект']);
+        $deletedProject = Project::factory()->for($contractor, 'contractor')->create(['name' => 'Удалённый проект']);
+        $deletedProject->delete();
+        $proposal = $this->proposalFor($contractor);
+
+        $this->actingAs($admin)
+            ->get(route('proposals.edit', $proposal))
+            ->assertOk()
+            ->assertSee('Живой проект')
+            ->assertDontSee('Удалённый проект');
     }
 
     /**

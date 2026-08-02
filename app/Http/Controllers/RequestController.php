@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRequestRequest;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\Contractor;
 use App\Models\Item;
+use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\Request;
 use Illuminate\Http\RedirectResponse;
@@ -67,8 +68,9 @@ class RequestController extends Controller
         $this->authorizeContractorAccess($contractor);
 
         $employedPeople = $this->employedPeopleForSelect($contractor);
+        $projects = $this->projectsForSelect($contractor);
 
-        return view('requests.create', compact('contractor', 'employedPeople'));
+        return view('requests.create', compact('contractor', 'employedPeople', 'projects'));
     }
 
     /**
@@ -83,6 +85,7 @@ class RequestController extends Controller
         Request::create([
             'employed_person_id' => $data['employed_person_id'],
             'user_id' => auth()->id(),
+            'project_id' => $data['project_id'] ?? null,
             'date' => $data['date'],
             'status' => $data['status'] ?? null,
         ]);
@@ -101,7 +104,7 @@ class RequestController extends Controller
 
         abort_if($request->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
-        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'requestItems.item.vendor', 'proposals']);
+        $request->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'project', 'requestItems.item.vendor', 'proposals']);
 
         $items = Item::forSelect();
 
@@ -116,8 +119,9 @@ class RequestController extends Controller
         $this->authorizeRequestAccess($request);
 
         $employedPeople = $this->employedPeopleForSelect($request->employedPerson->contractor);
+        $projects = $this->projectsForSelect($request->employedPerson->contractor);
 
-        return view('requests.edit', compact('request', 'employedPeople'));
+        return view('requests.edit', compact('request', 'employedPeople', 'projects'));
     }
 
     /**
@@ -167,6 +171,7 @@ class RequestController extends Controller
                 'request_id' => $request->id,
                 'employed_person_id' => $request->employed_person_id,
                 'user_id' => auth()->id(),
+                'project_id' => $request->project_id,
                 'date' => now()->toDateString(),
                 'status' => 'draft',
                 'comment' => $request->comment,
@@ -206,6 +211,20 @@ class RequestController extends Controller
                     ? "{$employed->contactPerson->fio} ({$employed->position})"
                     : $employed->contactPerson->fio,
             ])
+            ->all();
+    }
+
+    /**
+     * Список проектов контрагента для селекта «Проект» (мягко-удалённые исключаются).
+     *
+     * @return array<int, string>
+     */
+    protected function projectsForSelect(Contractor $contractor): array
+    {
+        return $contractor->projects()
+            ->orderBy('id')
+            ->get()
+            ->mapWithKeys(fn (Project $project) => [$project->id => $project->name])
             ->all();
     }
 }
