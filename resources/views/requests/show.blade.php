@@ -41,6 +41,21 @@
                         —
                     @endif
                 </dd>
+
+                <dt class="col-5 col-sm-3 col-md-2">КП</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
+                    @php $proposal = $request->proposals->first(); @endphp
+                    @if ($proposal)
+                        <a href="{{ route('proposals.show', [$proposal, 'from' => '/' . request()->path()]) }}">КП от {{ $proposal->date?->format('d.m.Y') ?? '—' }}</a>
+                    @else
+                        <form method="POST" action="{{ route('requests.create-proposal', $request) }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm(@js('Создать КП из этого запроса?'))">
+                                <i class="fas fa-file-invoice"></i> Создать КП
+                            </button>
+                        </form>
+                    @endif
+                </dd>
             </dl>
             </div>
         </div>
