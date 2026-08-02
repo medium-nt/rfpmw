@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\EmployedPerson;
+use App\Models\Project;
 use App\Models\Request;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,11 +29,14 @@ class StoreRequestRequest extends FormRequest
      */
     public function rules(): array
     {
+        $contractorId = $this->route('contractor')->id;
+
         return [
             'employed_person_id' => [
                 'required',
-                Rule::exists(EmployedPerson::class, 'id')->where('contractor_id', $this->route('contractor')->id),
+                Rule::exists(EmployedPerson::class, 'id')->where('contractor_id', $contractorId),
             ],
+            'project_id' => ['nullable', Rule::exists(Project::class, 'id')->where('contractor_id', $contractorId)],
             'date' => ['required', 'date'],
             'status' => ['nullable', 'string', Rule::in(array_keys(Request::getStatuses()))],
             'comment' => ['nullable', 'string'],

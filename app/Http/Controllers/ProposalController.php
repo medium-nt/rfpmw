@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProposalRequest;
 use App\Http\Requests\UpdateProposalRequest;
 use App\Models\Contractor;
 use App\Models\Item;
+use App\Models\Project;
 use App\Models\Proposal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -65,8 +66,9 @@ class ProposalController extends Controller
         $this->authorizeContractorAccess($contractor);
 
         $employedPeople = $this->employedPeopleForSelect($contractor);
+        $projects = $this->projectsForSelect($contractor);
 
-        return view('proposals.create', compact('contractor', 'employedPeople'));
+        return view('proposals.create', compact('contractor', 'employedPeople', 'projects'));
     }
 
     /**
@@ -81,6 +83,7 @@ class ProposalController extends Controller
         Proposal::create([
             'employed_person_id' => $data['employed_person_id'],
             'user_id' => auth()->id(),
+            'project_id' => $data['project_id'] ?? null,
             'date' => $data['date'],
             'status' => $data['status'] ?? null,
         ]);
@@ -99,7 +102,7 @@ class ProposalController extends Controller
 
         abort_if($proposal->employedPerson->contractor->trashed(), 404, 'Контрагент удалён.');
 
-        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'proposalItems.item.vendor', 'request']);
+        $proposal->load(['employedPerson.contactPerson', 'employedPerson.contractor', 'user', 'project', 'proposalItems.item.vendor', 'request']);
 
         $items = Item::forSelect();
 
@@ -114,8 +117,9 @@ class ProposalController extends Controller
         $this->authorizeProposalAccess($proposal);
 
         $employedPeople = $this->employedPeopleForSelect($proposal->employedPerson->contractor);
+        $projects = $this->projectsForSelect($proposal->employedPerson->contractor);
 
-        return view('proposals.edit', compact('proposal', 'employedPeople'));
+        return view('proposals.edit', compact('proposal', 'employedPeople', 'projects'));
     }
 
     /**
@@ -164,6 +168,20 @@ class ProposalController extends Controller
                     ? "{$employed->contactPerson->fio} ({$employed->position})"
                     : $employed->contactPerson->fio,
             ])
+            ->all();
+    }
+
+    /**
+     * Список проектов контрагента для селекта «Проект» (мягко-удалённые исключаются).
+     *
+     * @return array<int, string>
+     */
+    protected function projectsForSelect(Contractor $contractor): array
+    {
+        return $contractor->projects()
+            ->orderBy('id')
+            ->get()
+            ->mapWithKeys(fn (Project $project) => [$project->id => $project->name])
             ->all();
     }
 }

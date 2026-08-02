@@ -56,6 +56,15 @@
                         </form>
                     @endif
                 </dd>
+
+                <dt class="col-5 col-sm-3 col-md-2">Проект</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
+                    @if ($request->project)
+                        <a href="{{ route('projects.show', [$request->project, 'from' => '/' . request()->path()]) }}">{{ $request->project->name }}</a>
+                    @else
+                        —
+                    @endif
+                </dd>
             </dl>
             </div>
         </div>

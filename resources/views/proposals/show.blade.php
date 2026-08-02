@@ -42,6 +42,15 @@
                     @endif
                 </dd>
 
+                <dt class="col-5 col-sm-3 col-md-2">Проект</dt>
+                <dd class="col-7 col-sm-9 col-md-10">
+                    @if ($proposal->project)
+                        <a href="{{ route('projects.show', [$proposal->project, 'from' => '/' . request()->path()]) }}">{{ $proposal->project->name }}</a>
+                    @else
+                        —
+                    @endif
+                </dd>
+
                 @if ($proposal->request)
                     <dt class="col-5 col-sm-3 col-md-2">Запрос</dt>
                     <dd class="col-7 col-sm-9 col-md-10">
