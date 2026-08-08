@@ -46,7 +46,7 @@
                     <tr>
                         <th>Контрагент</th>
                         <th>Тип</th>
-                        <th style="width: 35%;">Должность</th>
+                        <th style="width: 35%;">Должность / роль</th>
                         <th>Менеджер</th>
                     </tr>
                 </thead>
@@ -61,8 +61,8 @@
                                 <form method="POST" action="{{ route('employed-people.update', [$employed->contractor, $employed]) }}" class="d-flex">
                                     @csrf
                                     @method('PUT')
-                                    <input type="text" name="position" class="form-control form-control-sm"
-                                        value="{{ old('position', $employed->position) }}" placeholder="Должность">
+                                    <input type="text" name="position" class="form-control form-control-sm" maxlength="100"
+                                        value="{{ old('position', $employed->position) }}" placeholder="Должность / роль">
                                 </form>
                             </td>
                             <td>{{ $employed->contractor->user?->name ?? '—' }}</td>

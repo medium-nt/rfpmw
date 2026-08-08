@@ -192,7 +192,7 @@
                     </div>
                     <div class="form-group col-12 col-md-4">
                         <label for="attach_position">Должность</label>
-                        <input type="text" id="attach_position" name="position" class="form-control" value="{{ old('position') }}">
+                        <input type="text" id="attach_position" name="position" maxlength="100" class="form-control" value="{{ old('position') }}">
                     </div>
                     <div class="form-group col-12 col-md-2">
                         <button type="submit" class="btn btn-success btn-block" @disabled($availablePeople->isEmpty())>

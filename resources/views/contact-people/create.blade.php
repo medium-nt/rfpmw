@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group col-12 col-md-6">
                         <label for="position">Должность</label>
-                        <input type="text" id="position" name="position"
+                        <input type="text" id="position" name="position" maxlength="100"
                             class="form-control @error('position') is-invalid @enderror"
                             value="{{ old('position') }}">
                         @error('position')
