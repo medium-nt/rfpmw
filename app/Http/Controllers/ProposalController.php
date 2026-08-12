@@ -86,6 +86,7 @@ class ProposalController extends Controller
             'project_id' => $data['project_id'] ?? null,
             'date' => $data['date'],
             'status' => $data['status'] ?? null,
+            'comment' => $data['comment'] ?? null,
         ]);
 
         return redirect()

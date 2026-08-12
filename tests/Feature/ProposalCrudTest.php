@@ -157,7 +157,7 @@ class ProposalCrudTest extends TestCase
                 'date' => '2026-04-01',
                 'status' => 'draft',
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('proposals.show', Proposal::latest('id')->first()));
 
         $record = Proposal::latest('id')->first();
         $this->assertNotNull($record);
@@ -234,7 +234,7 @@ class ProposalCrudTest extends TestCase
                 'date' => '2026-04-01',
                 'status' => 'draft',
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('proposals.show', Proposal::latest('id')->first()));
 
         $proposal = Proposal::latest('id')->first();
         $this->assertNotNull($proposal);
@@ -284,7 +284,7 @@ class ProposalCrudTest extends TestCase
                 'date' => '2026-04-01',
                 'status' => 'draft',
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('proposals.show', Proposal::latest('id')->first()));
 
         $proposal = Proposal::latest('id')->first();
         $this->assertNotNull($proposal);
@@ -427,6 +427,81 @@ class ProposalCrudTest extends TestCase
             'employed_person_id' => $employed->id,
             'user_id' => User::factory()->manager()->create()->id,
         ]);
+    }
+
+    /**
+     * Создание КП с комментарием сохраняет значение comment.
+     */
+    public function test_store_proposal_with_comment_saves_comment_value(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('proposals.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'date' => '2026-04-01',
+                'status' => 'draft',
+                'comment' => 'Тестовый комментарий к КП',
+            ])
+            ->assertRedirect(route('proposals.show', Proposal::latest('id')->first()));
+
+        $proposal = Proposal::latest('id')->first();
+        $this->assertNotNull($proposal);
+        $this->assertSame('Тестовый комментарий к КП', $proposal->comment);
+        $this->assertDatabaseHas('proposals', ['id' => $proposal->id, 'comment' => 'Тестовый комментарий к КП']);
+    }
+
+    /**
+     * Создание КП без комментария (nullable) сохраняет comment = null.
+     */
+    public function test_store_proposal_without_comment_saves_null(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('proposals.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'date' => '2026-04-01',
+                'status' => 'draft',
+            ])
+            ->assertRedirect(route('proposals.show', Proposal::latest('id')->first()));
+
+        $proposal = Proposal::latest('id')->first();
+        $this->assertNotNull($proposal);
+        $this->assertNull($proposal->comment);
+        $this->assertDatabaseHas('proposals', ['id' => $proposal->id, 'comment' => null]);
+    }
+
+    /**
+     * Обновление КП позволяет изменить значение comment.
+     */
+    public function test_update_proposal_can_change_comment(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $proposal = $this->proposalFor($contractor);
+
+        $this->actingAs($admin)
+            ->put(route('proposals.update', $proposal), [
+                'employed_person_id' => $proposal->employed_person_id,
+                'date' => '2026-04-15',
+                'status' => 'sent',
+                'comment' => 'Обновлённый комментарий',
+            ])
+            ->assertRedirect(route('proposals.show', $proposal));
+
+        $this->assertSame('Обновлённый комментарий', $proposal->fresh()->comment);
+        $this->assertDatabaseHas('proposals', ['id' => $proposal->id, 'comment' => 'Обновлённый комментарий']);
     }
 
     /**
