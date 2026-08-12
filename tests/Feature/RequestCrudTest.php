@@ -157,7 +157,7 @@ class RequestCrudTest extends TestCase
                 'date' => '2026-03-01',
                 'status' => 'new',
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('requests.show', Request::latest('id')->first()));
 
         $record = Request::latest('id')->first();
         $this->assertNotNull($record);
@@ -234,7 +234,7 @@ class RequestCrudTest extends TestCase
                 'status' => 'new',
                 'project_id' => $project->id,
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('requests.show', Request::latest('id')->first()));
 
         $record = Request::latest('id')->first();
         $this->assertNotNull($record);
@@ -261,7 +261,7 @@ class RequestCrudTest extends TestCase
                 'status' => 'new',
                 'project_id' => null,
             ])
-            ->assertRedirect(route('contractors.show', $contractor));
+            ->assertRedirect(route('requests.show', Request::latest('id')->first()));
 
         $record = Request::latest('id')->first();
         $this->assertNotNull($record);
@@ -414,6 +414,81 @@ class RequestCrudTest extends TestCase
             ->assertOk()
             ->assertSee('Живой проект')
             ->assertDontSee('Удалённый проект');
+    }
+
+    /**
+     * Создание запроса с комментарием сохраняет значение comment.
+     */
+    public function test_store_request_with_comment_saves_comment_value(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('requests.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'date' => '2026-03-01',
+                'status' => 'new',
+                'comment' => 'Тестовый комментарий к запросу',
+            ])
+            ->assertRedirect(route('requests.show', Request::latest('id')->first()));
+
+        $request = Request::latest('id')->first();
+        $this->assertNotNull($request);
+        $this->assertSame('Тестовый комментарий к запросу', $request->comment);
+        $this->assertDatabaseHas('requests', ['id' => $request->id, 'comment' => 'Тестовый комментарий к запросу']);
+    }
+
+    /**
+     * Создание запроса без комментария (nullable) сохраняет comment = null.
+     */
+    public function test_store_request_without_comment_saves_null(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $employed = EmployedPerson::factory()->create([
+            'contact_person_id' => ContactPerson::factory()->create()->id,
+            'contractor_id' => $contractor->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('requests.store', $contractor), [
+                'employed_person_id' => $employed->id,
+                'date' => '2026-03-01',
+                'status' => 'new',
+            ])
+            ->assertRedirect(route('requests.show', Request::latest('id')->first()));
+
+        $request = Request::latest('id')->first();
+        $this->assertNotNull($request);
+        $this->assertNull($request->comment);
+        $this->assertDatabaseHas('requests', ['id' => $request->id, 'comment' => null]);
+    }
+
+    /**
+     * Обновление запроса позволяет изменить значение comment.
+     */
+    public function test_update_request_can_change_comment(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $contractor = Contractor::factory()->for($admin, 'user')->create();
+        $request = $this->requestFor($contractor);
+
+        $this->actingAs($admin)
+            ->put(route('requests.update', $request), [
+                'employed_person_id' => $request->employed_person_id,
+                'date' => $request->date->format('Y-m-d'),
+                'status' => 'waiting_reply',
+                'comment' => 'Обновлённый комментарий',
+            ])
+            ->assertRedirect(route('requests.show', $request));
+
+        $this->assertSame('Обновлённый комментарий', $request->fresh()->comment);
+        $this->assertDatabaseHas('requests', ['id' => $request->id, 'comment' => 'Обновлённый комментарий']);
     }
 
     /**
